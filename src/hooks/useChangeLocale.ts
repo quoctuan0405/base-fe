@@ -1,7 +1,11 @@
 import { useRouter } from 'next/router';
-import { SupportedLanguage } from '../../next-i18next';
+import {
+  defaultLanguage,
+  SupportedLanguage,
+  supportedLanguages,
+} from '../../next-i18next';
 
-export const useChangeLocale = () => {
+export const useLocale = () => {
   const router = useRouter();
 
   const changeLocale = (newLocale: SupportedLanguage) => {
@@ -9,5 +13,19 @@ export const useChangeLocale = () => {
     router.push({ pathname, query }, router.asPath, { locale: newLocale });
   };
 
-  return changeLocale;
+  const isSupportedLocale = (
+    locale: string | undefined
+  ): locale is SupportedLanguage => {
+    if (locale && (supportedLanguages as readonly string[]).includes(locale)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  let locale: SupportedLanguage = isSupportedLocale(router.locale)
+    ? router.locale
+    : defaultLanguage;
+
+  return [locale, changeLocale] as const;
 };

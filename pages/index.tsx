@@ -17,7 +17,7 @@ import {
 } from '../src/redux/reducer/theme';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
-import { useChangeLocale } from '../src/hooks/useChangeLocale';
+import { useLocale } from '../src/hooks/useChangeLocale';
 import { ColorPickerDialog } from '../src/components/color-picker/ColorPickerDialog';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Button, { buttonClasses } from '@mui/material/Button';
@@ -25,24 +25,30 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Palette from '@mui/icons-material/Palette';
 import DarkMode from '@mui/icons-material/DarkMode';
 import LightMode from '@mui/icons-material/LightMode';
+import Translate from '@mui/icons-material/Translate';
 import { StaticProps } from './_app';
 
 export default function IndexPage() {
+  const dispatch = useAppDispatch();
   const { t } = useTranslation('common');
 
   const theme = useTheme();
-
-  const dispatch = useAppDispatch();
+  const colors = useAppSelector(selectThemeColors);
+  const [locale, changeLocale] = useLocale();
 
   const [open, setOpen] = useState(false);
-
-  const colors = useAppSelector(selectThemeColors);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const changeLocale = useChangeLocale();
+  const toggleLocale = () => {
+    if (locale == 'en') {
+      changeLocale('vi');
+    } else {
+      changeLocale('en');
+    }
+  };
 
   return (
     <div>
@@ -54,6 +60,9 @@ export default function IndexPage() {
             </Typography>
             <Box sx={{ flexGrow: 1 }} />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+              <IconButton onClick={() => toggleLocale()}>
+                <Translate color="primary" />
+              </IconButton>
               <IconButton onClick={() => dispatch(toggleDarkMode())}>
                 {theme.palette.mode === 'light' ? (
                   <LightMode color="primary" />

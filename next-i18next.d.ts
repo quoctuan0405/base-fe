@@ -15,4 +15,6 @@ declare module 'next-i18next' {
   }
 }
 
-export type SupportedLanguage = 'en' | 'vi';
+export const supportedLanguages = ['en', 'vi'] as const;
+export type SupportedLanguage = typeof supportedLanguages[number];
+export const defaultLanguage = 'vi';
