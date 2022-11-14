@@ -1,34 +1,36 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Paper, { PaperProps } from '@mui/material/Paper';
-import Draggable from 'react-draggable';
-import { Box, Grid, Icon, IconButton } from '@mui/material';
-import { Close } from '@mui/icons-material';
-import { ColorPicker } from '../src/components/color-picker/ColorPicker';
+import {
+  AppBar,
+  Box,
+  Divider,
+  IconButton,
+  Toolbar,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { useState } from 'react';
-import { Lock } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../src/redux/hooks';
 import {
   selectThemeColors,
   setThemeColorsWithThrottle,
+  toggleDarkMode,
 } from '../src/redux/reducer/theme';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 import { useChangeLocale } from '../src/hooks/useChangeLocale';
 import { ColorPickerDialog } from '../src/components/color-picker/ColorPickerDialog';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import Button, { buttonClasses } from '@mui/material/Button';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Palette from '@mui/icons-material/Palette';
+import DarkMode from '@mui/icons-material/DarkMode';
+import LightMode from '@mui/icons-material/LightMode';
 import { StaticProps } from './_app';
 
-export interface DialogTitleProps {
-  id: string;
-  children?: React.ReactNode;
-  onClose: () => void;
-}
-
-export default function DraggableDialog() {
+export default function IndexPage() {
   const { t } = useTranslation('common');
+
+  const theme = useTheme();
 
   const dispatch = useAppDispatch();
 
@@ -44,6 +46,46 @@ export default function DraggableDialog() {
 
   return (
     <div>
+      <Box>
+        <AppBar position="static" color="transparent">
+          <Toolbar>
+            <Typography variant="h6" noWrap>
+              Finance
+            </Typography>
+            <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+              <IconButton onClick={() => dispatch(toggleDarkMode())}>
+                {theme.palette.mode === 'light' ? (
+                  <LightMode color="primary" />
+                ) : (
+                  <DarkMode color="primary" />
+                )}
+              </IconButton>
+              <IconButton onClick={handleClickOpen}>
+                <Palette color="primary" />
+              </IconButton>
+              <Divider
+                sx={{ ml: 1, mr: 1 }}
+                orientation="vertical"
+                variant="middle"
+                flexItem
+              />
+              <Button
+                size="large"
+                sx={{
+                  [`& .${buttonClasses.endIcon} > *:nth-of-type(1)`]: {
+                    fontSize: (theme) => theme.typography.h4.fontSize,
+                  },
+                }}
+                startIcon={<KeyboardArrowDownIcon color="primary" />}
+                endIcon={<AccountCircle color="primary" />}
+              >
+                Thanh
+              </Button>
+            </Box>
+          </Toolbar>
+        </AppBar>
+      </Box>
       <div onClick={() => changeLocale('vi')}>{t('hi')}</div>
       <div>
         {colors.map((color) => (
@@ -58,9 +100,6 @@ export default function DraggableDialog() {
           ></div>
         ))}
       </div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open draggable dialog
-      </Button>
       <ColorPickerDialog
         colors={colors}
         open={open}

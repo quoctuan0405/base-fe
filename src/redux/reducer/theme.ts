@@ -74,6 +74,13 @@ export const themeSlice = createSlice({
         });
       }
     },
+    toggleDarkMode: (state) => {
+      if (state.theme.palette!.mode === 'dark') {
+        state.theme.palette!.mode = 'light';
+      } else {
+        state.theme.palette!.mode = 'dark';
+      }
+    },
   },
 });
 
@@ -110,7 +117,7 @@ export const selectThemeOption = (state: RootState) => {
   return state.theme.theme;
 };
 
-export const { setThemeColorsWithThrottle, setThemeColors } =
+export const { setThemeColorsWithThrottle, setThemeColors, toggleDarkMode } =
   themeSlice.actions;
 
 export default themeSlice.reducer;
