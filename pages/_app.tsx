@@ -5,6 +5,8 @@ import { Provider } from 'react-redux';
 import { store } from '../src/redux/store';
 import { MUIWrapper } from '../lib/mui';
 import { appWithTranslation } from 'next-i18next';
+import { HotkeyWrapper } from '../lib/hotkey';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 export interface StaticProps {
   locale: string;
@@ -21,7 +23,9 @@ const MyApp = (props: MyAppProps) => {
   return (
     <Provider store={store}>
       <MUIWrapper {...props}>
-        <Component {...pageProps} />
+        <HotkeyWrapper>
+          <Component {...pageProps} />
+        </HotkeyWrapper>
       </MUIWrapper>
     </Provider>
   );
