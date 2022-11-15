@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router';
-import {
-  defaultLanguage,
-  SupportedLanguage,
-  supportedLanguages,
-} from '../../next-i18next';
+
+export const supportedLanguages = ['en', 'vi'] as const;
+export type SupportedLanguage = typeof supportedLanguages[number];
+export const defaultLanguage = 'vi';
 
 export const useLocale = () => {
   const router = useRouter();

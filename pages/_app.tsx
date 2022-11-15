@@ -7,6 +7,7 @@ import { MUIWrapper } from '../lib/mui';
 import { appWithTranslation } from 'next-i18next';
 import { HotkeyWrapper } from '../lib/hotkey';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { SnackbarProvider, VariantType, useSnackbar } from 'notistack';
 
 export interface StaticProps {
   locale: string;
@@ -23,9 +24,11 @@ const MyApp = (props: MyAppProps) => {
   return (
     <Provider store={store}>
       <MUIWrapper {...props}>
-        <HotkeyWrapper>
-          <Component {...pageProps} />
-        </HotkeyWrapper>
+        <SnackbarProvider maxSnack={5}>
+          <HotkeyWrapper>
+            <Component {...pageProps} />
+          </HotkeyWrapper>
+        </SnackbarProvider>
       </MUIWrapper>
     </Provider>
   );
