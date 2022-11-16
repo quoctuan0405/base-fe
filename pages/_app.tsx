@@ -6,8 +6,7 @@ import { store } from '../src/redux/store';
 import { MUIWrapper } from '../lib/mui';
 import { appWithTranslation } from 'next-i18next';
 import { HotkeyWrapper } from '../lib/hotkey';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { SnackbarProvider, VariantType, useSnackbar } from 'notistack';
+import { NotificationWrapper } from '../lib/notistack';
 
 export interface StaticProps {
   locale: string;
@@ -24,11 +23,11 @@ const MyApp = (props: MyAppProps) => {
   return (
     <Provider store={store}>
       <MUIWrapper {...props}>
-        <SnackbarProvider maxSnack={5}>
-          <HotkeyWrapper>
+        <HotkeyWrapper>
+          <NotificationWrapper>
             <Component {...pageProps} />
-          </HotkeyWrapper>
-        </SnackbarProvider>
+          </NotificationWrapper>
+        </HotkeyWrapper>
       </MUIWrapper>
     </Provider>
   );

@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   AppBar,
   Box,
-  Container,
   Divider,
   IconButton,
   Menu,
@@ -32,6 +31,7 @@ import List from '@mui/icons-material/List';
 import Translate from '@mui/icons-material/Translate';
 import { StaticProps } from './_app';
 import { useSnackbar } from 'notistack';
+import { setNotification } from '../src/redux/reducer/notification';
 
 export default function IndexPage() {
   const dispatch = useAppDispatch();
@@ -84,9 +84,12 @@ export default function IndexPage() {
                   disableElevation
                   startIcon={<List />}
                   onClick={() =>
-                    enqueueSnackbar('This is a notification', {
-                      variant: 'success',
-                    })
+                    dispatch(
+                      setNotification({
+                        message: 'This is a notification',
+                        variant: 'success',
+                      })
+                    )
                   }
                 >
                   <Trans i18nKey="index:addToCategory">Add to category</Trans>

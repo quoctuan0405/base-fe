@@ -1,13 +1,5 @@
-import {
-  createTheme,
-  Palette,
-  PaletteColor,
-  PaletteOptions,
-  SimplePaletteColorOptions,
-  ThemeOptions,
-} from '@mui/material/styles';
+import { SimplePaletteColorOptions, ThemeOptions } from '@mui/material/styles';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { red } from '@mui/material/colors';
 import { RootState } from '../store';
 import { deepmerge } from '@mui/utils';
 
