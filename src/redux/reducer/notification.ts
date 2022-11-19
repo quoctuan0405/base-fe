@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { VariantType } from 'notistack';
-import { RootState } from '../store';
+import { AppState, RootState } from '../store';
 
 export interface Notification {
   message: string;
@@ -25,7 +25,7 @@ export const notificationSlice = createSlice({
   },
 });
 
-export const selectNotification = (state: RootState) =>
+export const selectNotification = (state: AppState) =>
   state.notification.notification;
 
 export const { setNotification } = notificationSlice.actions;

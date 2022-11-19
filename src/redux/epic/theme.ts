@@ -1,10 +1,10 @@
 import { Action } from '@reduxjs/toolkit';
 import { filter, debounceTime, switchMap } from 'rxjs';
 import { Epic } from 'redux-observable';
-import { RootState } from '../store';
+import { AppState, RootState } from '../store';
 import { setThemeColorsWithThrottle, setThemeColors } from '../reducer/theme';
 
-export const setThemeColorsEpic: Epic<Action, Action, RootState> = (
+export const setThemeColorsEpic: Epic<Action, Action, AppState> = (
   action$,
   state$
 ) =>

@@ -4,22 +4,18 @@ import {
   createEpicMiddleware,
   StateObservable,
 } from 'redux-observable';
-import { RootState } from '../store';
+import { AppState, RootState } from '../store';
 import { catchError, Observable } from 'rxjs';
 import { setThemeColorsEpic } from './theme';
 
-export const epicMiddleware = createEpicMiddleware<
-  AnyAction,
-  AnyAction,
-  RootState
->();
+export const epicMiddleware = createEpicMiddleware<AnyAction, AnyAction, any>();
 
 export const rootEpic = (
   action$: Observable<AnyAction>,
-  state$: StateObservable<RootState>,
+  state$: StateObservable<any>,
   dependencies: any
 ) =>
-  combineEpics<AnyAction, AnyAction, RootState>(setThemeColorsEpic)(
+  combineEpics<AnyAction, AnyAction, any>(setThemeColorsEpic)(
     action$,
     state$,
     dependencies

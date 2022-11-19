@@ -1,6 +1,6 @@
 import { SimplePaletteColorOptions, ThemeOptions } from '@mui/material/styles';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../store';
+import { AppState } from '../store';
 import { deepmerge } from '@mui/utils';
 
 export interface ThemeState {
@@ -76,7 +76,7 @@ export const themeSlice = createSlice({
   },
 });
 
-export const selectThemeColors = (state: RootState) => {
+export const selectThemeColors = (state: AppState) => {
   const primaryGroup = state.theme.theme.palette!
     .primary as SimplePaletteColorOptions;
 
@@ -105,7 +105,7 @@ export const selectThemeColors = (state: RootState) => {
   ];
 };
 
-export const selectThemeOption = (state: RootState) => {
+export const selectThemeOption = (state: AppState) => {
   return state.theme.theme;
 };
 
