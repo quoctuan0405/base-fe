@@ -7,6 +7,7 @@ import { MUIWrapper } from '../lib/mui';
 import { appWithTranslation } from 'next-i18next';
 import { HotkeyWrapper } from '../lib/hotkey';
 import { NotificationWrapper } from '../lib/notistack';
+import { DnDWrapper } from '../lib/dnd';
 
 export interface StaticProps {
   locale: string;
@@ -25,7 +26,9 @@ const MyApp = (props: MyAppProps) => {
       <MUIWrapper {...props}>
         <HotkeyWrapper>
           <NotificationWrapper>
-            <Component {...pageProps} />
+            <DnDWrapper>
+              <Component {...pageProps} />
+            </DnDWrapper>
           </NotificationWrapper>
         </HotkeyWrapper>
       </MUIWrapper>

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../src/redux/hooks';
 import { selectThemeColors } from '../src/redux/reducer/theme';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -7,6 +7,7 @@ import { StaticProps } from './_app';
 import { AppBar } from '../src/components/appbar';
 import { Box, Paper } from '@mui/material';
 import { TodoList } from '../src/components/todo';
+import { Table } from '../src/components/table';
 
 export default function IndexPage() {
   const dispatch = useAppDispatch();
@@ -33,6 +34,11 @@ export default function IndexPage() {
       </Box>
       <Box sx={{ padding: 2 }}>
         <TodoList />
+      </Box>
+      <Box sx={{ padding: 2 }}>
+        <Paper sx={{ padding: 2 }}>
+          <Table />
+        </Paper>
       </Box>
     </div>
   );
