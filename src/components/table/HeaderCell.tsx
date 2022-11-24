@@ -6,8 +6,12 @@ import {
   ColumnOrderState,
   Table,
 } from '@tanstack/react-table';
-import { useDrop, useDrag } from 'react-dnd';
+import _ from 'lodash';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useDrop, useDrag, XYCoord } from 'react-dnd';
+import { BehaviorSubject, debounceTime } from 'rxjs';
 import { Person } from '.';
+import { useMergeRef } from '../../hooks/mergeRef';
 
 interface Props {
   header: Header<Person, unknown>;
@@ -18,6 +22,8 @@ export const HeaderCell: React.FC<Props> = ({ header, table }) => {
   const { getState, setColumnOrder } = table;
   const { columnOrder } = getState();
   const { column } = header;
+
+  const ref = useRef<HTMLElement>();
 
   const reorderColumn = (
     draggedColumnId: string,
@@ -47,12 +53,47 @@ export const HeaderCell: React.FC<Props> = ({ header, table }) => {
       setColumnOrder(newColumnOrder);
     },
     hover: (draggedColumn: Column<Person>, monitor) => {
+      const draggedColumnIndex = _.findIndex(columnOrder, (columnId) => {
+        return columnId === draggedColumn.id;
+      });
+
+      const columnIndex = _.findIndex(columnOrder, (columnId) => {
+        return columnId === column.id;
+      });
+
+      if (draggedColumnIndex === columnIndex) {
+        return;
+      }
+
+      // Determine position of current component
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+
+      // Get vertical middle
+      const hoverMiddleX =
+        (hoverBoundingRect!.right - hoverBoundingRect!.left) / 2;
+
+      // Determine mouse position
+      const clientOffset = monitor.getClientOffset();
+
+      // Get pixels to the left
+      const hoverClientX =
+        (clientOffset as XYCoord).x - hoverBoundingRect!.left;
+
+      // Dragging rightward
+      if (draggedColumnIndex < columnIndex && hoverClientX < hoverMiddleX) {
+        return;
+      }
+
+      // Dragging leftward
+      if (draggedColumnIndex > columnIndex && hoverClientX > hoverMiddleX) {
+        return;
+      }
+
       const newColumnOrder = reorderColumn(
         draggedColumn.id,
         column.id,
         columnOrder
       );
-
       setColumnOrder(newColumnOrder);
     },
   });
@@ -70,18 +111,23 @@ export const HeaderCell: React.FC<Props> = ({ header, table }) => {
       key={header.id}
       sx={{
         width: header.getSize(),
-        opacity: isOver ? 0.5 : 1,
-        borderWidth: isOver ? 1 : null,
-        borderColor: isOver ? 'secondary.main' : null,
-        borderStyle: isOver ? 'dashed' : null,
       }}
-      ref={dropRef}
+      ref={ref}
     >
-      <Box sx={{ display: 'flex' }} ref={previewRef}>
+      <Box
+        sx={{
+          display: 'flex',
+          opacity: isOver || isDragging ? 0.3 : 1,
+          transition: 'opacity 0.1s',
+        }}
+      >
         <Typography fontWeight="bold">
           {flexRender(header.column.columnDef.header, header.getContext())}
         </Typography>
-        <Box sx={{ flexGrow: 1, cursor: 'grab' }} ref={dragRef} />
+        <Box
+          sx={{ flexGrow: 1, cursor: 'grab' }}
+          ref={(node: React.ReactElement) => dragRef(dropRef(previewRef(node)))}
+        />
         <Box
           sx={{
             cursor: 'col-resize',
