@@ -107,45 +107,69 @@ export const HeaderCell: React.FC<Props> = ({ header, table }) => {
   });
 
   return (
-    <TableCell
-      key={header.id}
-      sx={{
-        width: header.getSize(),
-      }}
-      ref={ref}
-    >
-      <Box
-        sx={{
-          display: 'flex',
-          opacity: isOver || isDragging ? 0.3 : 1,
-          transition: 'opacity 0.1s',
-        }}
-      >
-        <Typography fontWeight="bold">
-          {flexRender(header.column.columnDef.header, header.getContext())}
-        </Typography>
-        <Box
-          sx={{ flexGrow: 1, cursor: 'grab' }}
-          ref={(node: React.ReactElement) => dragRef(dropRef(previewRef(node)))}
-        />
-        <Box
+    <>
+      {header.column.id === 'actions' ? (
+        <TableCell
+          key={header.id}
           sx={{
-            cursor: 'col-resize',
-            marginLeft: 'auto',
-            paddingLeft: 0.5,
-            paddingRight: 0.5,
-            '&:hover': {
-              '& hr': {
-                border: 2,
-              },
-            },
+            width: header.getSize(),
           }}
-          onMouseDown={header.getResizeHandler()}
-          onTouchStart={header.getResizeHandler()}
+          ref={ref}
         >
-          <Divider orientation="vertical" light={true} />
-        </Box>
-      </Box>
-    </TableCell>
+          <Box
+            sx={{
+              display: 'flex',
+              opacity: isOver || isDragging ? 0.3 : 1,
+              transition: 'opacity 0.1s',
+            }}
+          >
+            {flexRender(header.column.columnDef.header, header.getContext())}
+          </Box>
+        </TableCell>
+      ) : (
+        <TableCell
+          key={header.id}
+          sx={{
+            width: header.getSize(),
+          }}
+          ref={ref}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              opacity: isOver || isDragging ? 0.3 : 1,
+              transition: 'opacity 0.1s',
+            }}
+          >
+            <Typography fontWeight="bold">
+              {flexRender(header.column.columnDef.header, header.getContext())}
+            </Typography>
+            <Box
+              sx={{ flexGrow: 1, cursor: 'grab' }}
+              ref={(node: React.ReactElement) =>
+                dragRef(dropRef(previewRef(node)))
+              }
+            />
+            <Box
+              sx={{
+                cursor: 'col-resize',
+                marginLeft: 'auto',
+                paddingLeft: 0.5,
+                paddingRight: 0.5,
+                '&:hover': {
+                  '& hr': {
+                    border: 2,
+                  },
+                },
+              }}
+              onMouseDown={header.getResizeHandler()}
+              onTouchStart={header.getResizeHandler()}
+            >
+              <Divider orientation="vertical" light={true} />
+            </Box>
+          </Box>
+        </TableCell>
+      )}
+    </>
   );
 };
