@@ -13,6 +13,7 @@ import {
   Switch,
   FormControl,
   IconButton,
+  TextField,
 } from '@mui/material';
 import {
   ColumnDef,
@@ -43,7 +44,7 @@ export interface Person {
 }
 
 const defaultColumn: Partial<ColumnDef<Person>> = {
-  cell: ({ getValue, row: { index }, column: { id }, table }) => {
+  cell: ({ getValue, row: { index }, column: { id }, table, cell }) => {
     const initialValue = getValue();
     // We need to keep and update the state of the cell normally
     const [value, setValue] = useState(initialValue);
@@ -59,10 +60,12 @@ const defaultColumn: Partial<ColumnDef<Person>> = {
     }, [initialValue]);
 
     return (
-      <input
-        value={value as string}
-        onChange={(e) => setValue(e.target.value)}
+      <TextField
+        value={value}
+        variant="outlined"
         onBlur={onBlur}
+        onChange={(event) => setValue(event.target.value)}
+        size="small"
       />
     );
   },
@@ -103,17 +106,14 @@ export const Table = () => {
       columnHelper.accessor('firstName', {
         id: 'firstName',
         header: 'First name',
-        cell: (info) => info.getValue(),
       }),
       columnHelper.accessor('lastName', {
         id: 'lastName',
         header: 'Last name',
-        cell: (info) => info.getValue(),
       }),
       columnHelper.accessor('age', {
         id: 'age',
         header: 'Age',
-        cell: (info) => info.getValue(),
       }),
       columnHelper.display({
         id: 'actions',

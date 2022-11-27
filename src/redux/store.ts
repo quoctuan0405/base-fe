@@ -3,6 +3,7 @@ import themeReducer, { ThemeState } from './reducer/theme';
 import { rootEpic, epicMiddleware } from './epic';
 import notificationReducer, { NotificationState } from './reducer/notification';
 import todoReducer, { TodoState } from './reducer/todo';
+import personReducer, { PersonState } from './reducer/person';
 import undoable from 'redux-undo';
 import { ActionTypes } from './action/type';
 
@@ -13,6 +14,11 @@ export const store = configureStore({
     todo: undoable(todoReducer, {
       undoType: ActionTypes.TODO_UNDO,
       redoType: ActionTypes.TODO_REDO,
+      limit: 10,
+    }),
+    person: undoable(personReducer, {
+      undoType: ActionTypes.PERSON_UNDO,
+      redoType: ActionTypes.PERSON_REDO,
       limit: 10,
     }),
   },

@@ -34,7 +34,9 @@ export const ColorPicker: React.FC<Props> = ({
 
   useEffect(() => {
     if (colors$) {
-      const subs = colors$.subscribe((colors) => onChange(colors));
+      const subs = colors$
+        .pipe(debounceTime(40))
+        .subscribe((colors) => onChange(colors));
 
       return () => {
         subs.unsubscribe();

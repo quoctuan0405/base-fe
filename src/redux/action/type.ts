@@ -1,4 +1,6 @@
 export enum ActionTypes {
   TODO_UNDO = 'TODO_UNDO',
   TODO_REDO = 'TODO_REDO',
+  PERSON_UNDO = 'PERSON_UNDO',
+  PERSON_REDO = 'PERSON_REDO',
 }
