@@ -9,9 +9,7 @@ import {
 import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrop, useDrag, XYCoord } from 'react-dnd';
-import { BehaviorSubject, debounceTime } from 'rxjs';
 import { Person } from '.';
-import { useMergeRef } from '../../hooks/mergeRef';
 
 interface Props {
   header: Header<Person, unknown>;
@@ -107,69 +105,45 @@ export const HeaderCell: React.FC<Props> = ({ header, table }) => {
   });
 
   return (
-    <>
-      {header.column.id === 'actions' ? (
-        <TableCell
-          key={header.id}
+    <TableCell
+      key={header.id}
+      sx={{
+        width: header.getSize(),
+      }}
+      ref={ref}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          opacity: isOver || isDragging ? 0.3 : 1,
+          transition: 'opacity 0.1s',
+        }}
+      >
+        <Typography fontWeight="bold">
+          {flexRender(header.column.columnDef.header, header.getContext())}
+        </Typography>
+        <Box
+          sx={{ flexGrow: 1, cursor: 'grab' }}
+          ref={(node: React.ReactElement) => dragRef(dropRef(previewRef(node)))}
+        />
+        <Box
           sx={{
-            width: header.getSize(),
+            cursor: 'col-resize',
+            marginLeft: 'auto',
+            paddingLeft: 0.5,
+            paddingRight: 0.5,
+            '&:hover': {
+              '& hr': {
+                border: 2,
+              },
+            },
           }}
-          ref={ref}
+          onMouseDown={header.getResizeHandler()}
+          onTouchStart={header.getResizeHandler()}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              opacity: isOver || isDragging ? 0.3 : 1,
-              transition: 'opacity 0.1s',
-            }}
-          >
-            {flexRender(header.column.columnDef.header, header.getContext())}
-          </Box>
-        </TableCell>
-      ) : (
-        <TableCell
-          key={header.id}
-          sx={{
-            width: header.getSize(),
-          }}
-          ref={ref}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              opacity: isOver || isDragging ? 0.3 : 1,
-              transition: 'opacity 0.1s',
-            }}
-          >
-            <Typography fontWeight="bold">
-              {flexRender(header.column.columnDef.header, header.getContext())}
-            </Typography>
-            <Box
-              sx={{ flexGrow: 1, cursor: 'grab' }}
-              ref={(node: React.ReactElement) =>
-                dragRef(dropRef(previewRef(node)))
-              }
-            />
-            <Box
-              sx={{
-                cursor: 'col-resize',
-                marginLeft: 'auto',
-                paddingLeft: 0.5,
-                paddingRight: 0.5,
-                '&:hover': {
-                  '& hr': {
-                    border: 2,
-                  },
-                },
-              }}
-              onMouseDown={header.getResizeHandler()}
-              onTouchStart={header.getResizeHandler()}
-            >
-              <Divider orientation="vertical" light={true} />
-            </Box>
-          </Box>
-        </TableCell>
-      )}
-    </>
+          <Divider orientation="vertical" light={true} />
+        </Box>
+      </Box>
+    </TableCell>
   );
 };

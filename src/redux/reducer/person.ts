@@ -33,6 +33,48 @@ const initialState: PersonState = {
       lastName: 'dirte',
       age: 42,
     },
+    {
+      id: 4,
+      firstName: 'donna',
+      lastName: 'fisher',
+      age: 32,
+    },
+    {
+      id: 5,
+      firstName: 'howard',
+      lastName: 'will',
+      age: 27,
+    },
+    {
+      id: 6,
+      firstName: 'chris',
+      lastName: 'harris',
+      age: 28,
+    },
+    {
+      id: 7,
+      firstName: 'imani',
+      lastName: 'thiel',
+      age: 38,
+    },
+    {
+      id: 8,
+      firstName: 'flavie',
+      lastName: 'armstrong',
+      age: 24,
+    },
+    {
+      id: 9,
+      firstName: 'jo',
+      lastName: 'wunsch',
+      age: 48,
+    },
+    {
+      id: 10,
+      firstName: 'ana',
+      lastName: 'moen',
+      age: 48,
+    },
   ],
 };
 
@@ -46,15 +88,19 @@ export const personSlice = createSlice({
   name: 'person',
   initialState,
   reducers: {
-    updatePersonProperty: (
-      state,
-      action: PayloadAction<UpdateCellDataPayload>
-    ) => {
+    updatePerson: (state, action: PayloadAction<UpdateCellDataPayload>) => {
       const { index, column, value } = action.payload;
       state.data[index][column] = value;
     },
+    deletePerson: (state, action: PayloadAction<number[]>) => {
+      state.data.filter(
+        (person, index) => action.payload.indexOf(index) !== -1
+      );
+    },
   },
 });
+
+export const { updatePerson, deletePerson } = personSlice.actions;
 
 export const selectAllPerson = (state: AppState) => {
   return state.person.present.data;

@@ -14,20 +14,32 @@ import {
   FormControl,
   IconButton,
   TextField,
+  alpha,
 } from '@mui/material';
 import {
+  Column,
   ColumnDef,
   ColumnOrderState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   RowData,
+  RowSelection,
   useReactTable,
 } from '@tanstack/react-table';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HeaderCell } from './HeaderCell';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {
+  deletePerson,
+  selectAllPerson,
+  updatePerson,
+} from '../../redux/reducer/person';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { ActionTypes } from '../../redux/action/type';
+import { removeTodos } from '../../redux/reducer/todo';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
@@ -65,6 +77,7 @@ const defaultColumn: Partial<ColumnDef<Person>> = {
         variant="outlined"
         onBlur={onBlur}
         onChange={(event) => setValue(event.target.value)}
+        onClick={(event) => event.stopPropagation()}
         size="small"
       />
     );
@@ -72,49 +85,47 @@ const defaultColumn: Partial<ColumnDef<Person>> = {
 };
 
 export const Table = () => {
-  const [data, setData] = useState<Person[]>([
-    {
-      id: 1,
-      firstName: 'tanner',
-      lastName: 'linsley',
-      age: 24,
-    },
-    {
-      id: 2,
-      firstName: 'tanner',
-      lastName: 'miller',
-      age: 43,
-    },
-    {
-      id: 3,
-      firstName: 'joe',
-      lastName: 'dirte',
-      age: 42,
-    },
-  ]);
+  const dispatch = useAppDispatch();
+  const data = useAppSelector(selectAllPerson);
 
   const columns = useMemo(() => {
     const columnHelper = createColumnHelper<Person>();
 
-    const columns = [
-      columnHelper.accessor('id', {
+    const columns: ColumnDef<Person>[] = [
+      {
+        id: 'select',
+        header: '',
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onChange={row.getToggleSelectedHandler()}
+            onClick={(event) => event.stopPropagation()}
+          />
+        ),
+        size: 10,
+      },
+      {
         id: 'id',
+        accessorKey: 'id',
         header: 'ID',
         cell: (info) => info.getValue(),
         size: 60,
-      }),
-      columnHelper.accessor('firstName', {
+      },
+      {
         id: 'firstName',
+        accessorKey: 'firstName',
         header: 'First name',
-      }),
-      columnHelper.accessor('lastName', {
+      },
+      {
         id: 'lastName',
+        accessorKey: 'lastName',
         header: 'Last name',
-      }),
-      columnHelper.accessor('age', {
+      },
+      {
         id: 'age',
+        accessorKey: 'age',
         header: 'Age',
-      }),
+      },
       columnHelper.display({
         id: 'actions',
         size: 70,
@@ -124,7 +135,10 @@ export const Table = () => {
           </IconButton>
         ),
         cell: (props) => (
-          <IconButton color="error">
+          <IconButton
+            color="error"
+            onClick={(event) => event.stopPropagation()}
+          >
             <DeleteIcon />
           </IconButton>
         ),
@@ -152,67 +166,157 @@ export const Table = () => {
     defaultColumn,
     meta: {
       updateData: (rowIndex, columnId, value) => {
-        setData((old) =>
-          old.map((row, index) => {
-            if (index === rowIndex) {
-              return {
-                ...old[rowIndex]!,
-                [columnId]: value,
-              };
-            }
-            return row;
-          })
-        );
+        dispatch(updatePerson({ column: columnId, index: rowIndex, value }));
       },
     },
   });
 
+  const [lastSelectedIndex, setLastSelectedIndex] = useState<number>(0);
+  const selectedRowModel = table.getSelectedRowModel();
+
+  const deleteRef = useHotkeys(
+    'delete',
+    () => {
+      dispatch(deletePerson);
+    },
+    []
+  );
+
+  const escapeRef = useHotkeys('esc', () => {
+    table.resetRowSelection();
+  });
+
+  const undoRef = useHotkeys('ctrl+z', () => {
+    dispatch({ type: ActionTypes.PERSON_UNDO });
+  });
+
+  const redoRef = useHotkeys('ctrl+shift+z', () => {
+    dispatch({ type: ActionTypes.PERSON_REDO });
+  });
+
+  const ref = useRef(null);
+
+  useEffect(() => {
+    escapeRef.current = ref.current;
+    deleteRef.current = ref.current;
+    undoRef.current = ref.current;
+    redoRef.current = ref.current;
+  }, [ref.current]);
+
+  const columnLabel = useCallback(
+    (column: Column<Person>) => {
+      if (column.id === 'actions') {
+        return 'Actions';
+      } else if (column.id === 'select') {
+        return 'Select';
+      } else {
+        return column.columnDef.header?.toString();
+      }
+    },
+    [columns]
+  );
+
   return (
-    <>
+    <div ref={ref} tabIndex={-1}>
       <FormControl>
         <FormGroup>
-          {table.getAllLeafColumns().map((column) => (
-            <FormControlLabel
-              key={column.id}
-              control={
-                <Checkbox
-                  checked={column.getIsVisible()}
-                  onChange={() => {
-                    column.toggleVisibility();
-                  }}
-                />
-              }
-              label={
-                column.id === 'actions'
-                  ? 'Actions'
-                  : column.columnDef.header?.toString()
-              }
-            />
-          ))}
+          {table.getAllLeafColumns().map((column) => {
+            return (
+              <FormControlLabel
+                key={column.id}
+                control={
+                  <Checkbox
+                    checked={column.getIsVisible()}
+                    onChange={() => {
+                      column.toggleVisibility();
+                    }}
+                  />
+                }
+                label={columnLabel(column)}
+              />
+            );
+          })}
         </FormGroup>
       </FormControl>
       <MUITable>
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <HeaderCell key={header.id} header={header} table={table} />
-              ))}
+              {headerGroup.headers.map((header) => {
+                if (header.id === 'select') {
+                  return <TableCell key={header.id} padding="checkbox" />;
+                } else if (header.id === 'actions') {
+                  return (
+                    <TableCell key={header.id} padding="checkbox">
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </TableCell>
+                  );
+                } else {
+                  return (
+                    <HeaderCell key={header.id} header={header} table={table} />
+                  );
+                }
+              })}
             </TableRow>
           ))}
         </TableHead>
         <TableBody>
           {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
+            <TableRow
+              key={row.id}
+              sx={(theme) => ({
+                '&:hover': {
+                  backgroundColor: theme.palette.action.hover,
+                },
+                cursor: 'pointer',
+                backgroundColor: row.getIsSelected()
+                  ? alpha(
+                      theme.palette.primary.main,
+                      theme.palette.action.activatedOpacity
+                    )
+                  : null,
+                transition: 'background-color 0.1s',
+              })}
+              onClick={(e) => {
+                if (e.ctrlKey) {
+                  row.toggleSelected();
+                } else {
+                  table.resetRowSelection();
+                  row.toggleSelected();
+                }
+              }}
+            >
+              {row.getVisibleCells().map((cell) => {
+                if (
+                  cell.column.id === 'select' ||
+                  cell.column.id === 'actions'
+                ) {
+                  return (
+                    <TableCell key={cell.id} padding="checkbox">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  );
+                } else {
+                  return (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  );
+                }
+              })}
             </TableRow>
           ))}
         </TableBody>
       </MUITable>
-    </>
+    </div>
   );
 };
