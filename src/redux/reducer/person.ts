@@ -93,8 +93,8 @@ export const personSlice = createSlice({
       state.data[index][column] = value;
     },
     deletePerson: (state, action: PayloadAction<number[]>) => {
-      state.data.filter(
-        (person, index) => action.payload.indexOf(index) !== -1
+      state.data = state.data.filter(
+        (person, index) => action.payload.indexOf(index) === -1
       );
     },
   },

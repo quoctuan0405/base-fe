@@ -134,14 +134,21 @@ export const Table = () => {
             <AddCircleIcon />
           </IconButton>
         ),
-        cell: (props) => (
-          <IconButton
-            color="error"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <DeleteIcon />
-          </IconButton>
-        ),
+        cell: (cellContext) => {
+          const { row } = cellContext;
+
+          return (
+            <IconButton
+              color="error"
+              onClick={(event) => {
+                dispatch(deletePerson([row.index]));
+                event.stopPropagation();
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          );
+        },
       }),
     ];
 
@@ -177,9 +184,16 @@ export const Table = () => {
   const deleteRef = useHotkeys(
     'delete',
     () => {
-      dispatch(deletePerson);
+      const selectedIndex: number[] = [];
+
+      for (let row of selectedRowModel.flatRows) {
+        selectedIndex.push(row.index);
+      }
+
+      dispatch(deletePerson(selectedIndex));
+      table.resetRowSelection();
     },
-    []
+    [selectedRowModel.flatRows]
   );
 
   const escapeRef = useHotkeys('esc', () => {
