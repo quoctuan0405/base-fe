@@ -36,6 +36,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
+  Person,
   deletePerson,
   selectAllPerson,
   updatePerson,
@@ -45,49 +46,17 @@ import { ActionTypes } from '../../redux/action/type';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import _ from 'lodash';
+import { DeleteCell } from './cell/DeleteCell';
+import { SelectCell } from './cell/SelectCell';
+import { TextFieldCell } from './cell/TextFieldCell';
+import { ReadonlyCell } from './cell/ReadonlyCell';
+import React from 'react';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
     updateData: (rowIndex: number, columnId: string, value: unknown) => void;
   }
 }
-
-export interface Person {
-  [key: string]: any;
-  id: number;
-  firstName: string;
-  lastName: string;
-  age: number;
-}
-
-const defaultColumn: Partial<ColumnDef<Person>> = {
-  cell: ({ getValue, row: { index }, column: { id }, table, cell }) => {
-    const initialValue = getValue();
-    // We need to keep and update the state of the cell normally
-    const [value, setValue] = useState(initialValue);
-
-    // When the input is blurred, we'll call our table meta's updateData function
-    const onBlur = () => {
-      table.options.meta?.updateData(index, id, value);
-    };
-
-    // If the initialValue is changed external, sync it up with our state
-    useEffect(() => {
-      setValue(initialValue);
-    }, [initialValue]);
-
-    return (
-      <TextField
-        value={value}
-        variant="outlined"
-        onBlur={onBlur}
-        onChange={(event) => setValue(event.target.value)}
-        onClick={(event) => event.stopPropagation()}
-        size="small"
-      />
-    );
-  },
-};
 
 export const Table = () => {
   const dispatch = useAppDispatch();
@@ -96,64 +65,47 @@ export const Table = () => {
   const columns = useMemo(() => {
     const columnHelper = createColumnHelper<Person>();
 
-    const columns: ColumnDef<Person>[] = [
+    const columns: ColumnDef<Person, string | number | boolean>[] = [
       {
         id: 'select',
         header: '',
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onChange={row.getToggleSelectedHandler()}
-            onClick={(event) => event.stopPropagation()}
-          />
-        ),
+        cell: (cellContext) => <SelectCell cellContext={cellContext} />,
         size: 10,
       },
       {
         id: 'id',
         accessorKey: 'id',
         header: 'ID',
-        cell: (info) => info.getValue(),
+        cell: (cellContext) => <ReadonlyCell cellContext={cellContext} />,
         size: 60,
       },
       {
         id: 'firstName',
         accessorKey: 'firstName',
         header: 'First name',
+        cell: (cellContext) => <TextFieldCell cellContext={cellContext} />,
       },
       {
         id: 'lastName',
         accessorKey: 'lastName',
         header: 'Last name',
+        cell: (cellContext) => <TextFieldCell cellContext={cellContext} />,
       },
       {
         id: 'age',
         accessorKey: 'age',
         header: 'Age',
+        cell: (cellContext) => <TextFieldCell cellContext={cellContext} />,
       },
       columnHelper.display({
         id: 'actions',
         size: 70,
-        header: () => (
+        header: ({ header }) => (
           <IconButton color="success">
             <AddCircleIcon />
           </IconButton>
         ),
-        cell: (cellContext) => {
-          const { row } = cellContext;
-
-          return (
-            <IconButton
-              color="error"
-              onClick={(event) => {
-                dispatch(deletePerson([row.index]));
-                event.stopPropagation();
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
-          );
-        },
+        cell: (cellContext) => <DeleteCell cellContext={cellContext} />,
       }),
     ];
 
@@ -179,7 +131,6 @@ export const Table = () => {
     onRowSelectionChange: setRowSelection,
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
-    defaultColumn,
     meta: {
       updateData: (rowIndex, columnId, value) => {
         dispatch(updatePerson({ column: columnId, index: rowIndex, value }));
@@ -348,30 +299,11 @@ export const Table = () => {
                 }
               }}
             >
-              {row.getVisibleCells().map((cell) => {
-                if (
-                  cell.column.id === 'select' ||
-                  cell.column.id === 'actions'
-                ) {
-                  return (
-                    <TableCell key={cell.id} padding="checkbox">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  );
-                } else {
-                  return (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  );
-                }
-              })}
+              {row.getVisibleCells().map((cell) => (
+                <React.Fragment key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </React.Fragment>
+              ))}
             </TableRow>
           ))}
         </TableBody>

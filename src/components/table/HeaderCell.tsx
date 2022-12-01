@@ -9,7 +9,7 @@ import {
 import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrop, useDrag, XYCoord } from 'react-dnd';
-import { Person } from '.';
+import { Person } from '../../redux/reducer/person';
 
 interface Props {
   header: Header<Person, unknown>;
