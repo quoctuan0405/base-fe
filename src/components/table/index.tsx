@@ -15,6 +15,8 @@ import {
   IconButton,
   TextField,
   alpha,
+  Toolbar,
+  Tooltip,
 } from '@mui/material';
 import {
   Column,
@@ -25,6 +27,7 @@ import {
   getCoreRowModel,
   RowData,
   RowSelection,
+  RowSelectionState,
   useReactTable,
 } from '@tanstack/react-table';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -39,7 +42,9 @@ import {
 } from '../../redux/reducer/person';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { ActionTypes } from '../../redux/action/type';
-import { removeTodos } from '../../redux/reducer/todo';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import ViewColumnIcon from '@mui/icons-material/ViewColumn';
+import _ from 'lodash';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
@@ -161,13 +166,17 @@ export const Table = () => {
     })
   );
 
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
   const table = useReactTable({
     data,
     columns,
     state: {
       columnOrder: columnOrder,
+      rowSelection,
     },
     onColumnOrderChange: setColumnOrder,
+    onRowSelectionChange: setRowSelection,
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
     defaultColumn,
@@ -252,6 +261,21 @@ export const Table = () => {
           })}
         </FormGroup>
       </FormControl>
+      <Box sx={{ display: 'flex', flexFlow: 'row wrap' }}>
+        <Box sx={{ flexGrow: 1 }} />
+        <Box>
+          <Tooltip title="Column">
+            <IconButton>
+              <ViewColumnIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Filter list">
+            <IconButton>
+              <FilterAltIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </Box>
       <MUITable>
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -295,11 +319,32 @@ export const Table = () => {
                 transition: 'background-color 0.1s',
               })}
               onClick={(e) => {
-                if (e.ctrlKey) {
-                  row.toggleSelected();
+                if (e.ctrlKey || e.shiftKey) {
+                  if (e.ctrlKey) {
+                    row.toggleSelected();
+                    setLastSelectedIndex(row.index);
+                  }
+
+                  if (e.shiftKey) {
+                    const newRowSelection: RowSelectionState =
+                      _.clone(rowSelection);
+
+                    if (lastSelectedIndex >= row.index) {
+                      for (let i = row.index; i <= lastSelectedIndex; i++) {
+                        newRowSelection[i] = true;
+                      }
+                    } else {
+                      for (let i = lastSelectedIndex; i <= row.index; i++) {
+                        newRowSelection[i] = true;
+                      }
+                    }
+
+                    table.setRowSelection(newRowSelection);
+                  }
                 } else {
                   table.resetRowSelection();
                   row.toggleSelected();
+                  setLastSelectedIndex(row.index);
                 }
               }}
             >
