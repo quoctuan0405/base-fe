@@ -51,6 +51,7 @@ import { SelectCell } from './cell/SelectCell';
 import { TextFieldCell } from './cell/TextFieldCell';
 import { ReadonlyCell } from './cell/ReadonlyCell';
 import React from 'react';
+import { EmptyHeader } from './header/EmptyHeader';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
@@ -68,7 +69,9 @@ export const Table = () => {
     const columns: ColumnDef<Person, string | number | boolean>[] = [
       {
         id: 'select',
-        header: '',
+        header: (headerContext) => (
+          <EmptyHeader headerContext={headerContext} />
+        ),
         cell: (cellContext) => <SelectCell cellContext={cellContext} />,
         size: 10,
       },
@@ -233,7 +236,14 @@ export const Table = () => {
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 if (header.id === 'select') {
-                  return <TableCell key={header.id} padding="checkbox" />;
+                  return (
+                    <React.Fragment key={header.id}>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </React.Fragment>
+                  );
                 } else if (header.id === 'actions') {
                   return (
                     <TableCell key={header.id} padding="checkbox">
