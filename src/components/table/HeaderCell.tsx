@@ -5,6 +5,7 @@ import {
   Header,
   ColumnOrderState,
   Table,
+  HeaderContext,
 } from '@tanstack/react-table';
 import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -12,11 +13,14 @@ import { useDrop, useDrag, XYCoord } from 'react-dnd';
 import { Person } from '../../redux/reducer/person';
 
 interface Props {
-  header: Header<Person, unknown>;
-  table: Table<Person>;
+  headerContext: HeaderContext<Person, unknown>;
+  headerName: string;
 }
 
-export const HeaderCell: React.FC<Props> = ({ header, table }) => {
+export const HeaderCell: React.FC<Props> = ({
+  headerContext: { header, table },
+  headerName,
+}) => {
   const { getState, setColumnOrder } = table;
   const { columnOrder } = getState();
   const { column } = header;
@@ -119,9 +123,7 @@ export const HeaderCell: React.FC<Props> = ({ header, table }) => {
           transition: 'opacity 0.1s',
         }}
       >
-        <Typography fontWeight="bold">
-          {flexRender(header.column.columnDef.header, header.getContext())}
-        </Typography>
+        <Typography fontWeight="bold">{headerName}</Typography>
         <Box
           sx={{ flexGrow: 1, cursor: 'grab' }}
           ref={(node: React.ReactElement) => dragRef(dropRef(previewRef(node)))}

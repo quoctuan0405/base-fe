@@ -52,6 +52,7 @@ import { TextFieldCell } from './cell/TextFieldCell';
 import { ReadonlyCell } from './cell/ReadonlyCell';
 import React from 'react';
 import { EmptyHeader } from './header/EmptyHeader';
+import { AddRowHeader } from './header/AddRowHeader';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
@@ -78,42 +79,48 @@ export const Table = () => {
       {
         id: 'id',
         accessorKey: 'id',
-        header: 'ID',
+        header: (headerContext) => (
+          <HeaderCell headerContext={headerContext} headerName="ID" />
+        ),
         cell: (cellContext) => <ReadonlyCell cellContext={cellContext} />,
         size: 60,
       },
       {
         id: 'firstName',
         accessorKey: 'firstName',
-        header: 'First name',
+        header: (headerContext) => (
+          <HeaderCell headerContext={headerContext} headerName="First name" />
+        ),
         cell: (cellContext) => <TextFieldCell cellContext={cellContext} />,
       },
       {
         id: 'lastName',
         accessorKey: 'lastName',
-        header: 'Last name',
+        header: (headerContext) => (
+          <HeaderCell headerContext={headerContext} headerName="Last name" />
+        ),
         cell: (cellContext) => <TextFieldCell cellContext={cellContext} />,
       },
       {
         id: 'age',
         accessorKey: 'age',
-        header: 'Age',
+        header: (headerContext) => (
+          <HeaderCell headerContext={headerContext} headerName="Age" />
+        ),
         cell: (cellContext) => <TextFieldCell cellContext={cellContext} />,
       },
       columnHelper.display({
         id: 'actions',
         size: 70,
-        header: ({ header }) => (
-          <IconButton color="success">
-            <AddCircleIcon />
-          </IconButton>
+        header: (headerContext) => (
+          <AddRowHeader headerContext={headerContext} />
         ),
         cell: (cellContext) => <DeleteCell cellContext={cellContext} />,
       }),
     ];
 
     return columns;
-  }, [data]);
+  }, []);
 
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
     columns.map((column) => {
@@ -180,22 +187,9 @@ export const Table = () => {
     redoRef.current = ref.current;
   }, [ref.current]);
 
-  const columnLabel = useCallback(
-    (column: Column<Person>) => {
-      if (column.id === 'actions') {
-        return 'Actions';
-      } else if (column.id === 'select') {
-        return 'Select';
-      } else {
-        return column.columnDef.header?.toString();
-      }
-    },
-    [columns]
-  );
-
   return (
     <div ref={ref} tabIndex={-1}>
-      <FormControl>
+      {/* <FormControl>
         <FormGroup>
           {table.getAllLeafColumns().map((column) => {
             return (
@@ -214,7 +208,7 @@ export const Table = () => {
             );
           })}
         </FormGroup>
-      </FormControl>
+      </FormControl> */}
       <Box sx={{ display: 'flex', flexFlow: 'row wrap' }}>
         <Box sx={{ flexGrow: 1 }} />
         <Box>
@@ -234,31 +228,14 @@ export const Table = () => {
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                if (header.id === 'select') {
-                  return (
-                    <React.Fragment key={header.id}>
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                    </React.Fragment>
-                  );
-                } else if (header.id === 'actions') {
-                  return (
-                    <TableCell key={header.id} padding="checkbox">
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                    </TableCell>
-                  );
-                } else {
-                  return (
-                    <HeaderCell key={header.id} header={header} table={table} />
-                  );
-                }
-              })}
+              {headerGroup.headers.map((header) => (
+                <React.Fragment key={header.id}>
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                </React.Fragment>
+              ))}
             </TableRow>
           ))}
         </TableHead>
