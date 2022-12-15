@@ -10,7 +10,7 @@ import {
 import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrop, useDrag, XYCoord } from 'react-dnd';
-import { Person } from '../../redux/reducer/person';
+import { Person } from '../../../redux/reducer/person';
 
 interface Props {
   headerContext: HeaderContext<Person, unknown>;
@@ -113,6 +113,7 @@ export const HeaderCell: React.FC<Props> = ({
       key={header.id}
       sx={{
         width: header.getSize(),
+        paddingRight: 0,
       }}
       ref={ref}
     >

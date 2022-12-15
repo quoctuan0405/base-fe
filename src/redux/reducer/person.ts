@@ -1,6 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '../store';
 
+export enum PersonField {
+  select = 'select',
+  id = 'id',
+  firstName = 'firstName',
+  lastName = 'lastName',
+  age = 'age',
+  action = 'action',
+}
+
 export interface Person {
   [key: string]: any;
   id: number;
@@ -11,9 +20,18 @@ export interface Person {
 
 export interface PersonState {
   data: Person[];
+  columnNameMapping: Record<PersonField, string>;
 }
 
 const initialState: PersonState = {
+  columnNameMapping: {
+    select: 'Select',
+    id: 'ID',
+    firstName: 'First name',
+    lastName: 'Last name',
+    age: 'Age',
+    action: 'Action',
+  },
   data: [
     {
       id: 1,
@@ -104,6 +122,10 @@ export const { updatePerson, deletePerson } = personSlice.actions;
 
 export const selectAllPerson = (state: AppState) => {
   return state.person.present.data;
+};
+
+export const selectColumnMapping = (state: AppState) => {
+  return state.person.present.columnNameMapping;
 };
 
 export default personSlice.reducer;

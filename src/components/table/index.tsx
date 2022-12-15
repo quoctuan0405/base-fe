@@ -31,7 +31,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { HeaderCell } from './HeaderCell';
+import { HeaderCell } from './header/HeaderCell';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -40,82 +40,114 @@ import {
   deletePerson,
   selectAllPerson,
   updatePerson,
+  selectColumnMapping,
+  PersonField,
 } from '../../redux/reducer/person';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { ActionTypes } from '../../redux/action/type';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import _ from 'lodash';
-import { DeleteCell } from './cell/DeleteCell';
-import { SelectCell } from './cell/SelectCell';
-import { TextFieldCell } from './cell/TextFieldCell';
-import { ReadonlyCell } from './cell/ReadonlyCell';
+import { DeleteCell, TextFieldCell, CheckboxCell, ReadonlyCell } from './cell';
 import React from 'react';
 import { EmptyHeader } from './header/EmptyHeader';
 import { AddRowHeader } from './header/AddRowHeader';
+import { ColumnOrderMenu } from './menu/ColumnOrderMenu';
 
-declare module '@tanstack/react-table' {
-  interface TableMeta<TData extends RowData> {
-    updateData: (rowIndex: number, columnId: string, value: unknown) => void;
-  }
-}
-
-export const Table = () => {
+export const Table: React.FC = () => {
   const dispatch = useAppDispatch();
   const data = useAppSelector(selectAllPerson);
+  const columnMapping = useAppSelector(selectColumnMapping);
 
   const columns = useMemo(() => {
     const columnHelper = createColumnHelper<Person>();
 
     const columns: ColumnDef<Person, string | number | boolean>[] = [
       {
-        id: 'select',
+        id: PersonField.select,
         header: (headerContext) => (
-          <EmptyHeader headerContext={headerContext} />
+          <EmptyHeader headerId={headerContext.header.id} />
         ),
-        cell: (cellContext) => <SelectCell cellContext={cellContext} />,
+        cell: (cellContext) => <CheckboxCell cellContext={cellContext} />,
         size: 10,
       },
       {
-        id: 'id',
-        accessorKey: 'id',
+        id: PersonField.id,
+        accessorKey: PersonField.id,
         header: (headerContext) => (
-          <HeaderCell headerContext={headerContext} headerName="ID" />
+          <HeaderCell
+            headerContext={headerContext}
+            headerName={columnMapping[PersonField.id]}
+          />
         ),
-        cell: (cellContext) => <ReadonlyCell cellContext={cellContext} />,
+        cell: (cellContext) => (
+          <ReadonlyCell value={cellContext.cell.getValue()} />
+        ),
         size: 60,
       },
       {
-        id: 'firstName',
-        accessorKey: 'firstName',
+        id: PersonField.firstName,
+        accessorKey: PersonField.firstName,
         header: (headerContext) => (
-          <HeaderCell headerContext={headerContext} headerName="First name" />
+          <HeaderCell
+            headerContext={headerContext}
+            headerName={columnMapping[PersonField.firstName]}
+          />
         ),
-        cell: (cellContext) => <TextFieldCell cellContext={cellContext} />,
+        cell: (cellContext) => (
+          <TextFieldCell
+            value={cellContext.cell.getValue()}
+            rowIndex={cellContext.row.index}
+            columnId={cellContext.column.id}
+          />
+        ),
       },
       {
-        id: 'lastName',
-        accessorKey: 'lastName',
+        id: PersonField.lastName,
+        accessorKey: PersonField.lastName,
         header: (headerContext) => (
-          <HeaderCell headerContext={headerContext} headerName="Last name" />
+          <HeaderCell
+            headerContext={headerContext}
+            headerName={columnMapping[PersonField.lastName]}
+          />
         ),
-        cell: (cellContext) => <TextFieldCell cellContext={cellContext} />,
+        cell: (cellContext) => (
+          <TextFieldCell
+            value={cellContext.cell.getValue()}
+            rowIndex={cellContext.row.index}
+            columnId={cellContext.column.id}
+          />
+        ),
       },
       {
-        id: 'age',
-        accessorKey: 'age',
+        id: PersonField.age,
+        accessorKey: PersonField.age,
         header: (headerContext) => (
-          <HeaderCell headerContext={headerContext} headerName="Age" />
+          <HeaderCell
+            headerContext={headerContext}
+            headerName={columnMapping[PersonField.age]}
+          />
         ),
-        cell: (cellContext) => <TextFieldCell cellContext={cellContext} />,
+        cell: (cellContext) => (
+          <TextFieldCell
+            value={cellContext.cell.getValue()}
+            rowIndex={cellContext.row.index}
+            columnId={cellContext.column.id}
+          />
+        ),
       },
       columnHelper.display({
-        id: 'actions',
+        id: PersonField.action,
         size: 70,
         header: (headerContext) => (
           <AddRowHeader headerContext={headerContext} />
         ),
-        cell: (cellContext) => <DeleteCell cellContext={cellContext} />,
+        cell: (cellContext) => (
+          <DeleteCell
+            rowId={cellContext.row.id}
+            rowIndex={cellContext.row.index}
+          />
+        ),
       }),
     ];
 
@@ -141,11 +173,6 @@ export const Table = () => {
     onRowSelectionChange: setRowSelection,
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
-    meta: {
-      updateData: (rowIndex, columnId, value) => {
-        dispatch(updatePerson({ column: columnId, index: rowIndex, value }));
-      },
-    },
   });
 
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number>(0);
@@ -189,34 +216,10 @@ export const Table = () => {
 
   return (
     <div ref={ref} tabIndex={-1}>
-      {/* <FormControl>
-        <FormGroup>
-          {table.getAllLeafColumns().map((column) => {
-            return (
-              <FormControlLabel
-                key={column.id}
-                control={
-                  <Checkbox
-                    checked={column.getIsVisible()}
-                    onChange={() => {
-                      column.toggleVisibility();
-                    }}
-                  />
-                }
-                label={columnLabel(column)}
-              />
-            );
-          })}
-        </FormGroup>
-      </FormControl> */}
       <Box sx={{ display: 'flex', flexFlow: 'row wrap' }}>
         <Box sx={{ flexGrow: 1 }} />
         <Box>
-          <Tooltip title="Column">
-            <IconButton>
-              <ViewColumnIcon />
-            </IconButton>
-          </Tooltip>
+          <ColumnOrderMenu table={table} />
           <Tooltip title="Filter list">
             <IconButton>
               <FilterAltIcon />
@@ -247,6 +250,7 @@ export const Table = () => {
                 '&:hover': {
                   backgroundColor: theme.palette.action.hover,
                 },
+                userSelect: 'none',
                 cursor: 'pointer',
                 backgroundColor: row.getIsSelected()
                   ? alpha(
