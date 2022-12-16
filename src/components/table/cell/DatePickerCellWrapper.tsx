@@ -29,7 +29,11 @@ export const DatePickerCellWrapper: React.FC<Props> = React.memo(
     };
 
     return (
-      <TableCell>
+      <TableCell
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
+      >
         <LocalizationProvider dateAdapter={AdapterMoment}>
           <DatePicker
             value={value}
