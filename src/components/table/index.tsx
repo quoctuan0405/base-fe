@@ -54,6 +54,7 @@ import {
   CheckboxCell,
   ReadonlyCell,
   DatePickerCell,
+  CurrencyCell,
 } from './cell';
 import React from 'react';
 import { EmptyHeader } from './header/EmptyHeader';
@@ -156,7 +157,7 @@ export const Table: React.FC = () => {
           />
         ),
         cell: (cellContext) => (
-          <TextFieldCell
+          <CurrencyCell
             value={cellContext.cell.getValue()}
             rowIndex={cellContext.row.index}
             columnId={cellContext.column.id}
