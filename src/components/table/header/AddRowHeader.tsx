@@ -11,7 +11,11 @@ interface Props {
 export const AddRowHeader: React.FC<Props> = React.memo(
   ({ headerContext: { header } }) => {
     return (
-      <TableCell key={header.id} padding="checkbox" sx={{ userSelect: 'none' }}>
+      <TableCell
+        key={header.id}
+        padding="checkbox"
+        sx={{ minWidth: header.getSize(), userSelect: 'none' }}
+      >
         <IconButton color="success">
           <AddCircleIcon />
         </IconButton>

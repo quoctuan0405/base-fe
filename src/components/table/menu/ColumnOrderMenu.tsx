@@ -45,7 +45,7 @@ export const ColumnOrderMenu: React.FC<Props> = ({ table }) => {
 
   return (
     <>
-      <Tooltip title="Column">
+      <Tooltip title="Show/Hide columns">
         <IconButton onClick={handleClick}>
           <ViewColumnIcon />
         </IconButton>

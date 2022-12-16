@@ -17,6 +17,7 @@ import {
   alpha,
   Toolbar,
   Tooltip,
+  TableContainer,
 } from '@mui/material';
 import {
   Column,
@@ -46,13 +47,19 @@ import {
 import { useHotkeys } from 'react-hotkeys-hook';
 import { ActionTypes } from '../../redux/action/type';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import _ from 'lodash';
-import { DeleteCell, TextFieldCell, CheckboxCell, ReadonlyCell } from './cell';
+import {
+  DeleteCell,
+  TextFieldCell,
+  CheckboxCell,
+  ReadonlyCell,
+  DatePickerCell,
+} from './cell';
 import React from 'react';
 import { EmptyHeader } from './header/EmptyHeader';
 import { AddRowHeader } from './header/AddRowHeader';
 import { ColumnOrderMenu } from './menu/ColumnOrderMenu';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
 
 export const Table: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -86,29 +93,30 @@ export const Table: React.FC = () => {
         size: 60,
       },
       {
-        id: PersonField.firstName,
-        accessorKey: PersonField.firstName,
+        id: PersonField.spendAt,
+        accessorKey: PersonField.spendAt,
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[PersonField.firstName]}
+            headerName={columnMapping[PersonField.spendAt]}
           />
         ),
         cell: (cellContext) => (
-          <TextFieldCell
+          <DatePickerCell
             value={cellContext.cell.getValue()}
             rowIndex={cellContext.row.index}
             columnId={cellContext.column.id}
           />
         ),
+        size: 220,
       },
       {
-        id: PersonField.lastName,
-        accessorKey: PersonField.lastName,
+        id: PersonField.description,
+        accessorKey: PersonField.description,
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[PersonField.lastName]}
+            headerName={columnMapping[PersonField.description]}
           />
         ),
         cell: (cellContext) => (
@@ -118,14 +126,15 @@ export const Table: React.FC = () => {
             columnId={cellContext.column.id}
           />
         ),
+        size: 180,
       },
       {
-        id: PersonField.age,
-        accessorKey: PersonField.age,
+        id: PersonField.category,
+        accessorKey: PersonField.category,
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[PersonField.age]}
+            headerName={columnMapping[PersonField.category]}
           />
         ),
         cell: (cellContext) => (
@@ -135,10 +144,64 @@ export const Table: React.FC = () => {
             columnId={cellContext.column.id}
           />
         ),
+        size: 180,
+      },
+      {
+        id: PersonField.amount,
+        accessorKey: PersonField.amount,
+        header: (headerContext) => (
+          <HeaderCell
+            headerContext={headerContext}
+            headerName={columnMapping[PersonField.amount]}
+          />
+        ),
+        cell: (cellContext) => (
+          <TextFieldCell
+            value={cellContext.cell.getValue()}
+            rowIndex={cellContext.row.index}
+            columnId={cellContext.column.id}
+          />
+        ),
+        size: 180,
+      },
+      {
+        id: PersonField.spender,
+        accessorKey: PersonField.spender,
+        header: (headerContext) => (
+          <HeaderCell
+            headerContext={headerContext}
+            headerName={columnMapping[PersonField.spender]}
+          />
+        ),
+        cell: (cellContext) => (
+          <TextFieldCell
+            value={cellContext.cell.getValue()}
+            rowIndex={cellContext.row.index}
+            columnId={cellContext.column.id}
+          />
+        ),
+        size: 180,
+      },
+      {
+        id: PersonField.status,
+        accessorKey: PersonField.status,
+        header: (headerContext) => (
+          <HeaderCell
+            headerContext={headerContext}
+            headerName={columnMapping[PersonField.status]}
+          />
+        ),
+        cell: (cellContext) => (
+          <TextFieldCell
+            value={cellContext.cell.getValue()}
+            rowIndex={cellContext.row.index}
+            columnId={cellContext.column.id}
+          />
+        ),
+        size: 180,
       },
       columnHelper.display({
         id: PersonField.action,
-        size: 70,
         header: (headerContext) => (
           <AddRowHeader headerContext={headerContext} />
         ),
@@ -148,6 +211,7 @@ export const Table: React.FC = () => {
             rowIndex={cellContext.row.index}
           />
         ),
+        size: 50,
       }),
     ];
 
@@ -220,85 +284,92 @@ export const Table: React.FC = () => {
         <Box sx={{ flexGrow: 1 }} />
         <Box>
           <ColumnOrderMenu table={table} />
-          <Tooltip title="Filter list">
+          <Tooltip title="Filters">
             <IconButton>
               <FilterAltIcon />
             </IconButton>
           </Tooltip>
+          <Tooltip title="Toggle full screen">
+            <IconButton>
+              <FullscreenIcon />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
-      <MUITable>
-        <TableHead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <React.Fragment key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                </React.Fragment>
-              ))}
-            </TableRow>
-          ))}
-        </TableHead>
-        <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              sx={(theme) => ({
-                '&:hover': {
-                  backgroundColor: theme.palette.action.hover,
-                },
-                userSelect: 'none',
-                cursor: 'pointer',
-                backgroundColor: row.getIsSelected()
-                  ? alpha(
-                      theme.palette.primary.main,
-                      theme.palette.action.activatedOpacity
-                    )
-                  : null,
-                transition: 'background-color 0.1s',
-              })}
-              onClick={(e) => {
-                if (e.ctrlKey || e.shiftKey) {
-                  if (e.ctrlKey) {
+      <TableContainer sx={{ overflow: 'scroll' }}>
+        <MUITable>
+          <TableHead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <React.Fragment key={header.id}>
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                  </React.Fragment>
+                ))}
+              </TableRow>
+            ))}
+          </TableHead>
+          <TableBody>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                sx={(theme) => ({
+                  '&:hover': {
+                    backgroundColor: theme.palette.action.hover,
+                  },
+                  userSelect: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: row.getIsSelected()
+                    ? alpha(
+                        theme.palette.primary.main,
+                        theme.palette.action.activatedOpacity
+                      )
+                    : null,
+                  transition: 'background-color 0.1s',
+                })}
+                onClick={(e) => {
+                  if (e.ctrlKey || e.shiftKey) {
+                    if (e.ctrlKey) {
+                      row.toggleSelected();
+                      setLastSelectedIndex(row.index);
+                    }
+
+                    if (e.shiftKey) {
+                      const newRowSelection: RowSelectionState =
+                        _.clone(rowSelection);
+
+                      if (lastSelectedIndex >= row.index) {
+                        for (let i = row.index; i <= lastSelectedIndex; i++) {
+                          newRowSelection[i] = true;
+                        }
+                      } else {
+                        for (let i = lastSelectedIndex; i <= row.index; i++) {
+                          newRowSelection[i] = true;
+                        }
+                      }
+
+                      table.setRowSelection(newRowSelection);
+                    }
+                  } else {
+                    table.resetRowSelection();
                     row.toggleSelected();
                     setLastSelectedIndex(row.index);
                   }
-
-                  if (e.shiftKey) {
-                    const newRowSelection: RowSelectionState =
-                      _.clone(rowSelection);
-
-                    if (lastSelectedIndex >= row.index) {
-                      for (let i = row.index; i <= lastSelectedIndex; i++) {
-                        newRowSelection[i] = true;
-                      }
-                    } else {
-                      for (let i = lastSelectedIndex; i <= row.index; i++) {
-                        newRowSelection[i] = true;
-                      }
-                    }
-
-                    table.setRowSelection(newRowSelection);
-                  }
-                } else {
-                  table.resetRowSelection();
-                  row.toggleSelected();
-                  setLastSelectedIndex(row.index);
-                }
-              }}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <React.Fragment key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </React.Fragment>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </MUITable>
+                }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <React.Fragment key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </React.Fragment>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </MUITable>
+      </TableContainer>
     </div>
   );
 };

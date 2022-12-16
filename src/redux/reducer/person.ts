@@ -4,18 +4,24 @@ import { AppState } from '../store';
 export enum PersonField {
   select = 'select',
   id = 'id',
-  firstName = 'firstName',
-  lastName = 'lastName',
-  age = 'age',
+  spendAt = 'spendAt',
+  description = 'description',
+  category = 'category',
+  amount = 'amount',
+  spender = 'spender',
+  status = 'status',
   action = 'action',
 }
 
 export interface Person {
   [key: string]: any;
   id: number;
-  firstName: string;
-  lastName: string;
-  age: number;
+  spendAt: string;
+  description: string;
+  category: string;
+  amount: number;
+  spender: string;
+  status: string;
 }
 
 export interface PersonState {
@@ -27,71 +33,68 @@ const initialState: PersonState = {
   columnNameMapping: {
     select: 'Select',
     id: 'ID',
-    firstName: 'First name',
-    lastName: 'Last name',
-    age: 'Age',
+    spendAt: 'Spend at',
+    description: 'Description',
+    category: 'Category',
+    amount: 'Amount',
+    spender: 'Spender',
+    status: 'Status',
     action: 'Action',
   },
   data: [
     {
       id: 1,
-      firstName: 'tanner',
-      lastName: 'linsley',
-      age: 24,
+      spendAt: '2022-12-12',
+      description: 'Cơm gà',
+      category: 'Đi chợ',
+      amount: 10000,
+      spender: 'Trang',
+      status: 'Đã pay',
     },
     {
       id: 2,
-      firstName: 'tanner',
-      lastName: 'miller',
-      age: 43,
+      spendAt: '2022-12-12',
+      description: 'Cơm gà',
+      category: 'Đi chợ',
+      amount: 10000,
+      spender: 'Trang',
+      status: 'Đã pay',
     },
     {
       id: 3,
-      firstName: 'joe',
-      lastName: 'dirte',
-      age: 42,
+      spendAt: '2022-12-12',
+      description: 'Cơm gà',
+      category: 'Đi chợ',
+      amount: 10000,
+      spender: 'Trang',
+      status: 'Đã pay',
     },
     {
       id: 4,
-      firstName: 'donna',
-      lastName: 'fisher',
-      age: 32,
+      spendAt: '2022-12-12',
+      description: 'Cơm gà',
+      category: 'Đi chợ',
+      amount: 10000,
+      spender: 'Trang',
+      status: 'Đã pay',
     },
     {
       id: 5,
-      firstName: 'howard',
-      lastName: 'will',
-      age: 27,
+      spendAt: '2022-12-12',
+      description: 'Cơm gà',
+      category: 'Đi chợ',
+      amount: 10000,
+      spender: 'Trang',
+      status: 'Đã pay',
     },
     {
       id: 6,
-      firstName: 'chris',
-      lastName: 'harris',
-      age: 28,
-    },
-    {
-      id: 7,
-      firstName: 'imani',
-      lastName: 'thiel',
-      age: 38,
-    },
-    {
-      id: 8,
-      firstName: 'flavie',
-      lastName: 'armstrong',
-      age: 24,
-    },
-    {
-      id: 9,
-      firstName: 'jo',
-      lastName: 'wunsch',
-      age: 48,
-    },
-    {
-      id: 10,
-      firstName: 'ana',
-      lastName: 'moen',
-      age: 48,
+      spendAt: '2022-12-12',
+      description: 'Cơm gà',
+      category: 'Đi chợ',
+      amount: 10000,
+      spender: 'Trang',
+      status: 'Đã pay',
     },
   ],
 };

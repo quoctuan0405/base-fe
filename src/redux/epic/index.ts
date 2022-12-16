@@ -4,7 +4,6 @@ import {
   createEpicMiddleware,
   StateObservable,
 } from 'redux-observable';
-import { AppState, RootState } from '../store';
 import { catchError, Observable } from 'rxjs';
 import { setThemeColorsEpic } from './theme';
 

@@ -10,11 +10,7 @@ interface Props {
 export const SelectCell: React.FC<Props> = ({ cellId, selected, onChange }) => {
   return (
     <TableCell key={cellId} padding="checkbox">
-      <Checkbox
-        checked={selected}
-        onChange={onChange}
-        onClick={(event) => event.stopPropagation()}
-      />
+      <Checkbox checked={selected} onChange={onChange} />
     </TableCell>
   );
 };

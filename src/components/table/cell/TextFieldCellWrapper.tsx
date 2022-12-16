@@ -1,6 +1,5 @@
 import React from 'react';
-import { TableCell, Checkbox, TextField } from '@mui/material';
-import { CellContext } from '@tanstack/react-table';
+import { TableCell, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Person, updatePerson } from '../../../redux/reducer/person';
 import { useAppDispatch } from '../../../redux/hooks';

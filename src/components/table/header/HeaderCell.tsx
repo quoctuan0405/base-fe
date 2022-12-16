@@ -10,6 +10,7 @@ import {
 import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrop, useDrag, XYCoord } from 'react-dnd';
+import { useMergeRef } from '../../../hooks/mergeRef';
 import { Person } from '../../../redux/reducer/person';
 
 interface Props {
@@ -108,14 +109,16 @@ export const HeaderCell: React.FC<Props> = ({
     }),
   });
 
+  const mergeRef = useMergeRef([ref, dropRef, previewRef]);
+
   return (
     <TableCell
       key={header.id}
       sx={{
-        width: header.getSize(),
+        minWidth: header.getSize(),
         paddingRight: 0,
       }}
-      ref={ref}
+      ref={mergeRef}
     >
       <Box
         sx={{
@@ -127,7 +130,7 @@ export const HeaderCell: React.FC<Props> = ({
         <Typography fontWeight="bold">{headerName}</Typography>
         <Box
           sx={{ flexGrow: 1, cursor: 'grab' }}
-          ref={(node: React.ReactElement) => dragRef(dropRef(previewRef(node)))}
+          ref={(node: React.ReactElement) => dragRef(node)}
         />
         <Box
           sx={{
