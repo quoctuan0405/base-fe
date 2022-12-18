@@ -4,14 +4,20 @@ import { useEffect, useState } from 'react';
 import { Entry, updateEntry } from '../../../redux/reducer/entry';
 import { useAppDispatch } from '../../../redux/hooks';
 
+export interface Option {
+  id: string | number;
+  name: string;
+}
+
 interface Props {
-  value: string | number | boolean;
+  options: Option[];
+  value: Option['id'];
   rowIndex: number;
   columnId: string;
 }
 
-export const TextFieldCellWrapper: React.FC<Props> = React.memo(
-  ({ value: initialValue, rowIndex, columnId }) => {
+export const SelectCellWrapper: React.FC<Props> = React.memo(
+  ({ value: initialValue, rowIndex, columnId, options }) => {
     const dispatch = useAppDispatch();
 
     // We need to keep and update the state of the cell normally
@@ -44,7 +50,11 @@ export const TextFieldCellWrapper: React.FC<Props> = React.memo(
           onClick={(event) => event.stopPropagation()}
           size="small"
         >
-          <MenuItem></MenuItem>
+          {options.map(({ id, name }) => (
+            <MenuItem key={id} value={id}>
+              {name}
+            </MenuItem>
+          ))}
         </Select>
       </TableCell>
     );

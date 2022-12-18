@@ -6,11 +6,17 @@ export enum EntryField {
   id = 'id',
   spendAt = 'spendAt',
   description = 'description',
-  category = 'category',
+  categoryId = 'categoryId',
   amount = 'amount',
   spenderId = 'spenderId',
   status = 'status',
   action = 'action',
+}
+
+export interface Category {
+  [key: string]: any;
+  id: number;
+  name: string;
 }
 
 export interface Spender {
@@ -24,7 +30,7 @@ export interface Entry {
   id: number;
   spendAt: string;
   description: string;
-  category: string;
+  categoryId: number;
   amount: number;
   spenderId: number;
   status: string;
@@ -32,7 +38,8 @@ export interface Entry {
 
 export interface EntryState {
   data: Entry[];
-  spenderMap: Record<number, Spender>;
+  spenders: Spender[];
+  categories: Category[];
   columnNameMapping: Record<EntryField, string>;
 }
 
@@ -42,7 +49,7 @@ const initialState: EntryState = {
     id: 'ID',
     spendAt: 'Spend at',
     description: 'Description',
-    category: 'Category',
+    categoryId: 'Category',
     amount: 'Amount',
     spenderId: 'Spender',
     status: 'Status',
@@ -53,7 +60,7 @@ const initialState: EntryState = {
       id: 1,
       spendAt: '2022-12-12',
       description: 'Cơm gà',
-      category: 'Đi chợ',
+      categoryId: 1,
       amount: 10000,
       spenderId: 1,
       status: 'Đã pay',
@@ -62,7 +69,7 @@ const initialState: EntryState = {
       id: 2,
       spendAt: '2022-12-12',
       description: 'Cơm gà',
-      category: 'Đi chợ',
+      categoryId: 2,
       amount: 10000,
       spenderId: 1,
       status: 'Đã pay',
@@ -71,7 +78,7 @@ const initialState: EntryState = {
       id: 3,
       spendAt: '2022-12-12',
       description: 'Cơm gà',
-      category: 'Đi chợ',
+      categoryId: 3,
       amount: 10000,
       spenderId: 2,
       status: 'Đã pay',
@@ -80,7 +87,7 @@ const initialState: EntryState = {
       id: 4,
       spendAt: '2022-12-12',
       description: 'Cơm gà',
-      category: 'Đi chợ',
+      categoryId: 3,
       amount: 10000,
       spenderId: 3,
       status: 'Đã pay',
@@ -89,7 +96,7 @@ const initialState: EntryState = {
       id: 5,
       spendAt: '2022-12-12',
       description: 'Cơm gà',
-      category: 'Đi chợ',
+      categoryId: 1,
       amount: 10000,
       spenderId: 4,
       status: 'Đã pay',
@@ -98,34 +105,52 @@ const initialState: EntryState = {
       id: 6,
       spendAt: '2022-12-12',
       description: 'Cơm gà',
-      category: 'Đi chợ',
+      categoryId: 2,
       amount: 10000,
       spenderId: 5,
       status: 'Đã pay',
     },
   ],
-  spenderMap: {
-    1: {
+  spenders: [
+    {
       id: 1,
       name: 'Trang',
     },
-    2: {
+    {
       id: 2,
       name: 'Hoàng',
     },
-    3: {
+    {
       id: 3,
       name: 'Tiến',
     },
-    4: {
+    {
       id: 4,
       name: 'Hiếu',
     },
-    5: {
+    {
       id: 5,
       name: 'Thanh',
     },
-  },
+  ],
+  categories: [
+    {
+      id: 1,
+      name: 'Đi chợ',
+    },
+    {
+      id: 2,
+      name: 'Mua sắm',
+    },
+    {
+      id: 3,
+      name: 'Hóa đơn',
+    },
+    {
+      id: 4,
+      name: 'Ăn ngoài',
+    },
+  ],
 };
 
 export interface UpdateCellDataPayload {
@@ -135,7 +160,7 @@ export interface UpdateCellDataPayload {
 }
 
 export const personSlice = createSlice({
-  name: 'person',
+  name: 'entry',
   initialState,
   reducers: {
     updateEntry: (state, action: PayloadAction<UpdateCellDataPayload>) => {
@@ -144,7 +169,7 @@ export const personSlice = createSlice({
     },
     deleteEntry: (state, action: PayloadAction<number[]>) => {
       state.data = state.data.filter(
-        (person, index) => action.payload.indexOf(index) === -1
+        (entry, index) => action.payload.indexOf(index) === -1
       );
     },
   },
@@ -152,7 +177,7 @@ export const personSlice = createSlice({
 
 export const { updateEntry, deleteEntry } = personSlice.actions;
 
-export const selectAllPerson = (state: AppState) => {
+export const selectAllEntries = (state: AppState) => {
   return state.entry.present.data;
 };
 
@@ -160,8 +185,12 @@ export const selectColumnMapping = (state: AppState) => {
   return state.entry.present.columnNameMapping;
 };
 
-export const selectSpenderMap = (state: AppState) => {
-  return state.entry.present.spenderMap;
+export const selectAllSpenders = (state: AppState) => {
+  return state.entry.present.spenders;
+};
+
+export const selectAllCategories = (state: AppState) => {
+  return state.entry.present.categories;
 };
 
 export default personSlice.reducer;

@@ -39,11 +39,14 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   Entry,
   deleteEntry,
-  selectAllPerson,
+  selectAllEntries,
   updateEntry,
   selectColumnMapping,
   EntryField,
-  selectSpenderMap,
+  selectAllSpenders,
+  Spender,
+  Category,
+  selectAllCategories,
 } from '../../redux/reducer/entry';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { ActionTypes } from '../../redux/action/type';
@@ -56,6 +59,7 @@ import {
   ReadonlyCell,
   DatePickerCell,
   CurrencyCell,
+  SelectCell,
 } from './cell';
 import React from 'react';
 import { EmptyHeader } from './header/EmptyHeader';
@@ -65,9 +69,10 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 
 export const Table: React.FC = () => {
   const dispatch = useAppDispatch();
-  const data = useAppSelector(selectAllPerson);
+  const data = useAppSelector(selectAllEntries);
   const columnMapping = useAppSelector(selectColumnMapping);
-  const spenderMap = useAppSelector(selectSpenderMap);
+  const spenders = useAppSelector(selectAllSpenders);
+  const categories = useAppSelector(selectAllCategories);
 
   const columns = useMemo(() => {
     const columnHelper = createColumnHelper<Entry>();
@@ -132,17 +137,18 @@ export const Table: React.FC = () => {
         size: 180,
       },
       {
-        id: EntryField.category,
-        accessorKey: EntryField.category,
+        id: EntryField.categoryId,
+        accessorKey: EntryField.categoryId,
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[EntryField.category]}
+            headerName={columnMapping[EntryField.categoryId]}
           />
         ),
         cell: (cellContext) => (
-          <TextFieldCell
-            value={cellContext.cell.getValue()}
+          <SelectCell
+            options={categories}
+            value={cellContext.cell.getValue() as Category['id']}
             rowIndex={cellContext.row.index}
             columnId={cellContext.column.id}
           />
@@ -177,8 +183,9 @@ export const Table: React.FC = () => {
           />
         ),
         cell: (cellContext) => (
-          <TextFieldCell
-            value={cellContext.cell.getValue()}
+          <SelectCell
+            options={spenders}
+            value={cellContext.cell.getValue() as Spender['id']}
             rowIndex={cellContext.row.index}
             columnId={cellContext.column.id}
           />
