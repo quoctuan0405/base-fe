@@ -1,8 +1,9 @@
 import React from 'react';
 import { InputAdornment, TableCell, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Person, updatePerson } from '../../../redux/reducer/person';
+import { Entry, updateEntry } from '../../../redux/reducer/entry';
 import { useAppDispatch } from '../../../redux/hooks';
+import { CurrencyInput } from './custom-components/CurrencyInput';
 
 interface Props {
   value: string | number | boolean;
@@ -17,10 +18,9 @@ export const CurrencyCellWrapper: React.FC<Props> = React.memo(
     // We need to keep and update the state of the cell normally
     const [value, setValue] = useState(initialValue);
 
-    // When the input is blurred, we'll call our table meta's updateData function
     const onBlur = () => {
       dispatch(
-        updatePerson({
+        updateEntry({
           column: columnId,
           index: rowIndex,
           value: value,
@@ -44,7 +44,8 @@ export const CurrencyCellWrapper: React.FC<Props> = React.memo(
           onClick={(event) => event.stopPropagation()}
           size="small"
           InputProps={{
-            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            endAdornment: 'đ',
+            inputComponent: CurrencyInput as any,
           }}
         />
       </TableCell>

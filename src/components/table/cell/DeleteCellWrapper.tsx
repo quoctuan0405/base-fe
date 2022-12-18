@@ -1,7 +1,7 @@
 import React from 'react';
 import { TableCell, IconButton } from '@mui/material';
 import { CellContext } from '@tanstack/react-table';
-import { deletePerson, Person } from '../../../redux/reducer/person';
+import { deleteEntry, Entry } from '../../../redux/reducer/entry';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAppDispatch } from '../../../redux/hooks';
 
@@ -19,7 +19,7 @@ export const DeleteCellWrapper: React.FC<Props> = React.memo(
         <IconButton
           color="error"
           onClick={(event) => {
-            dispatch(deletePerson([rowIndex]));
+            dispatch(deleteEntry([rowIndex]));
             event.stopPropagation();
           }}
         >

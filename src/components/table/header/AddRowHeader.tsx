@@ -1,11 +1,11 @@
 import React from 'react';
 import { TableCell, IconButton } from '@mui/material';
 import { HeaderContext } from '@tanstack/react-table';
-import { Person } from '../../../redux/reducer/person';
+import { Entry } from '../../../redux/reducer/entry';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 interface Props {
-  headerContext: HeaderContext<Person, unknown>;
+  headerContext: HeaderContext<Entry, unknown>;
 }
 
 export const AddRowHeader: React.FC<Props> = React.memo(

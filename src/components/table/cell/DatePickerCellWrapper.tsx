@@ -2,7 +2,7 @@ import React from 'react';
 import { TableCell, Checkbox, TextField } from '@mui/material';
 import { CellContext } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
-import { Person, updatePerson } from '../../../redux/reducer/person';
+import { Entry, updateEntry } from '../../../redux/reducer/entry';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useAppDispatch } from '../../../redux/hooks';
@@ -20,7 +20,7 @@ export const DatePickerCellWrapper: React.FC<Props> = React.memo(
 
     const onChange = (value: string | number | boolean) => {
       dispatch(
-        updatePerson({
+        updateEntry({
           column: columnId,
           index: rowIndex,
           value: value,

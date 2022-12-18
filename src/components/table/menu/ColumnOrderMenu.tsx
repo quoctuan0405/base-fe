@@ -18,15 +18,15 @@ import {
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import { Table } from '@tanstack/react-table';
 import {
-  Person,
-  PersonField,
+  Entry,
+  EntryField,
   selectColumnMapping,
-} from '../../../redux/reducer/person';
+} from '../../../redux/reducer/entry';
 import { table } from 'console';
 import { useAppSelector } from '../../../redux/hooks';
 
 interface Props {
-  table: Table<Person>;
+  table: Table<Entry>;
 }
 
 export const ColumnOrderMenu: React.FC<Props> = ({ table }) => {
@@ -66,7 +66,7 @@ export const ColumnOrderMenu: React.FC<Props> = ({ table }) => {
                       <Checkbox checked={column.getIsVisible()} />
                     </ListItemIcon>
                     <ListItemText>
-                      {columnMapping[column.id as PersonField]}
+                      {columnMapping[column.id as EntryField]}
                     </ListItemText>
                   </MenuItem>
                 );

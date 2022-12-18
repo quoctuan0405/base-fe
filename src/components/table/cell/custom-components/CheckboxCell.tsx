@@ -7,7 +7,11 @@ interface Props {
   onChange: (event: unknown) => void;
 }
 
-export const SelectCell: React.FC<Props> = ({ cellId, selected, onChange }) => {
+export const CheckboxCell: React.FC<Props> = ({
+  cellId,
+  selected,
+  onChange,
+}) => {
   return (
     <TableCell key={cellId} padding="checkbox">
       <Checkbox checked={selected} onChange={onChange} />
@@ -15,4 +19,4 @@ export const SelectCell: React.FC<Props> = ({ cellId, selected, onChange }) => {
   );
 };
 
-export const MemoizedSelectCell = React.memo(SelectCell);
+export const MemoizedCheckboxCell = React.memo(CheckboxCell);

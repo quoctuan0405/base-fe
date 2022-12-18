@@ -8,7 +8,7 @@ import { AppBar } from '../src/components/appbar';
 import { Box, Paper } from '@mui/material';
 import { TodoList } from '../src/components/todo';
 import { Table } from '../src/components/table';
-import { updatePerson } from '../src/redux/reducer/person';
+import { updateEntry } from '../src/redux/reducer/entry';
 
 export default function IndexPage() {
   const dispatch = useAppDispatch();

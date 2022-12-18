@@ -1,7 +1,7 @@
 import React from 'react';
 import { TableCell } from '@mui/material';
 import { HeaderContext } from '@tanstack/react-table';
-import { Person } from '../../../redux/reducer/person';
+import { Entry } from '../../../redux/reducer/entry';
 
 interface Props {
   headerId: string;

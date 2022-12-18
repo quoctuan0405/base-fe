@@ -11,10 +11,10 @@ import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrop, useDrag, XYCoord } from 'react-dnd';
 import { useMergeRef } from '../../../hooks/mergeRef';
-import { Person } from '../../../redux/reducer/person';
+import { Entry } from '../../../redux/reducer/entry';
 
 interface Props {
-  headerContext: HeaderContext<Person, unknown>;
+  headerContext: HeaderContext<Entry, unknown>;
   headerName: string;
 }
 
@@ -46,7 +46,7 @@ export const HeaderCell: React.FC<Props> = ({
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
-    drop: (draggedColumn: Column<Person>) => {
+    drop: (draggedColumn: Column<Entry>) => {
       const newColumnOrder = reorderColumn(
         draggedColumn.id,
         column.id,
@@ -55,7 +55,7 @@ export const HeaderCell: React.FC<Props> = ({
 
       setColumnOrder(newColumnOrder);
     },
-    hover: (draggedColumn: Column<Person>, monitor) => {
+    hover: (draggedColumn: Column<Entry>, monitor) => {
       const draggedColumnIndex = _.findIndex(columnOrder, (columnId) => {
         return columnId === draggedColumn.id;
       });

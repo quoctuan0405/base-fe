@@ -37,13 +37,14 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
-  Person,
-  deletePerson,
+  Entry,
+  deleteEntry,
   selectAllPerson,
-  updatePerson,
+  updateEntry,
   selectColumnMapping,
-  PersonField,
-} from '../../redux/reducer/person';
+  EntryField,
+  selectSpenderMap,
+} from '../../redux/reducer/entry';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { ActionTypes } from '../../redux/action/type';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
@@ -66,13 +67,14 @@ export const Table: React.FC = () => {
   const dispatch = useAppDispatch();
   const data = useAppSelector(selectAllPerson);
   const columnMapping = useAppSelector(selectColumnMapping);
+  const spenderMap = useAppSelector(selectSpenderMap);
 
   const columns = useMemo(() => {
-    const columnHelper = createColumnHelper<Person>();
+    const columnHelper = createColumnHelper<Entry>();
 
-    const columns: ColumnDef<Person, string | number | boolean>[] = [
+    const columns: ColumnDef<Entry, string | number | boolean>[] = [
       {
-        id: PersonField.select,
+        id: EntryField.select,
         header: (headerContext) => (
           <EmptyHeader headerId={headerContext.header.id} />
         ),
@@ -80,12 +82,12 @@ export const Table: React.FC = () => {
         size: 10,
       },
       {
-        id: PersonField.id,
-        accessorKey: PersonField.id,
+        id: EntryField.id,
+        accessorKey: EntryField.id,
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[PersonField.id]}
+            headerName={columnMapping[EntryField.id]}
           />
         ),
         cell: (cellContext) => (
@@ -94,12 +96,12 @@ export const Table: React.FC = () => {
         size: 60,
       },
       {
-        id: PersonField.spendAt,
-        accessorKey: PersonField.spendAt,
+        id: EntryField.spendAt,
+        accessorKey: EntryField.spendAt,
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[PersonField.spendAt]}
+            headerName={columnMapping[EntryField.spendAt]}
           />
         ),
         cell: (cellContext) => (
@@ -112,12 +114,12 @@ export const Table: React.FC = () => {
         size: 220,
       },
       {
-        id: PersonField.description,
-        accessorKey: PersonField.description,
+        id: EntryField.description,
+        accessorKey: EntryField.description,
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[PersonField.description]}
+            headerName={columnMapping[EntryField.description]}
           />
         ),
         cell: (cellContext) => (
@@ -130,12 +132,12 @@ export const Table: React.FC = () => {
         size: 180,
       },
       {
-        id: PersonField.category,
-        accessorKey: PersonField.category,
+        id: EntryField.category,
+        accessorKey: EntryField.category,
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[PersonField.category]}
+            headerName={columnMapping[EntryField.category]}
           />
         ),
         cell: (cellContext) => (
@@ -148,12 +150,12 @@ export const Table: React.FC = () => {
         size: 180,
       },
       {
-        id: PersonField.amount,
-        accessorKey: PersonField.amount,
+        id: EntryField.amount,
+        accessorKey: EntryField.amount,
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[PersonField.amount]}
+            headerName={columnMapping[EntryField.amount]}
           />
         ),
         cell: (cellContext) => (
@@ -166,12 +168,12 @@ export const Table: React.FC = () => {
         size: 180,
       },
       {
-        id: PersonField.spender,
-        accessorKey: PersonField.spender,
+        id: EntryField.spenderId,
+        accessorKey: EntryField.spenderId,
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[PersonField.spender]}
+            headerName={columnMapping[EntryField.spenderId]}
           />
         ),
         cell: (cellContext) => (
@@ -184,12 +186,12 @@ export const Table: React.FC = () => {
         size: 180,
       },
       {
-        id: PersonField.status,
-        accessorKey: PersonField.status,
+        id: EntryField.status,
+        accessorKey: EntryField.status,
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[PersonField.status]}
+            headerName={columnMapping[EntryField.status]}
           />
         ),
         cell: (cellContext) => (
@@ -202,7 +204,7 @@ export const Table: React.FC = () => {
         size: 180,
       },
       columnHelper.display({
-        id: PersonField.action,
+        id: EntryField.action,
         header: (headerContext) => (
           <AddRowHeader headerContext={headerContext} />
         ),
@@ -252,7 +254,7 @@ export const Table: React.FC = () => {
         selectedIndex.push(row.index);
       }
 
-      dispatch(deletePerson(selectedIndex));
+      dispatch(deleteEntry(selectedIndex));
       table.resetRowSelection();
     },
     [selectedRowModel.flatRows]

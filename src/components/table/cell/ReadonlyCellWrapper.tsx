@@ -2,7 +2,7 @@ import React from 'react';
 import { TableCell, Checkbox, TextField } from '@mui/material';
 import { CellContext } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
-import { Person } from '../../../redux/reducer/person';
+import { Entry } from '../../../redux/reducer/entry';
 
 interface Props {
   value: string | number | boolean;

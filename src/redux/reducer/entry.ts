@@ -1,35 +1,42 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '../store';
 
-export enum PersonField {
+export enum EntryField {
   select = 'select',
   id = 'id',
   spendAt = 'spendAt',
   description = 'description',
   category = 'category',
   amount = 'amount',
-  spender = 'spender',
+  spenderId = 'spenderId',
   status = 'status',
   action = 'action',
 }
 
-export interface Person {
+export interface Spender {
+  [key: string]: any;
+  id: number;
+  name: string;
+}
+
+export interface Entry {
   [key: string]: any;
   id: number;
   spendAt: string;
   description: string;
   category: string;
   amount: number;
-  spender: string;
+  spenderId: number;
   status: string;
 }
 
-export interface PersonState {
-  data: Person[];
-  columnNameMapping: Record<PersonField, string>;
+export interface EntryState {
+  data: Entry[];
+  spenderMap: Record<number, Spender>;
+  columnNameMapping: Record<EntryField, string>;
 }
 
-const initialState: PersonState = {
+const initialState: EntryState = {
   columnNameMapping: {
     select: 'Select',
     id: 'ID',
@@ -37,7 +44,7 @@ const initialState: PersonState = {
     description: 'Description',
     category: 'Category',
     amount: 'Amount',
-    spender: 'Spender',
+    spenderId: 'Spender',
     status: 'Status',
     action: 'Action',
   },
@@ -48,7 +55,7 @@ const initialState: PersonState = {
       description: 'Cơm gà',
       category: 'Đi chợ',
       amount: 10000,
-      spender: 'Trang',
+      spenderId: 1,
       status: 'Đã pay',
     },
     {
@@ -57,7 +64,7 @@ const initialState: PersonState = {
       description: 'Cơm gà',
       category: 'Đi chợ',
       amount: 10000,
-      spender: 'Trang',
+      spenderId: 1,
       status: 'Đã pay',
     },
     {
@@ -66,7 +73,7 @@ const initialState: PersonState = {
       description: 'Cơm gà',
       category: 'Đi chợ',
       amount: 10000,
-      spender: 'Trang',
+      spenderId: 2,
       status: 'Đã pay',
     },
     {
@@ -75,7 +82,7 @@ const initialState: PersonState = {
       description: 'Cơm gà',
       category: 'Đi chợ',
       amount: 10000,
-      spender: 'Trang',
+      spenderId: 3,
       status: 'Đã pay',
     },
     {
@@ -84,7 +91,7 @@ const initialState: PersonState = {
       description: 'Cơm gà',
       category: 'Đi chợ',
       amount: 10000,
-      spender: 'Trang',
+      spenderId: 4,
       status: 'Đã pay',
     },
     {
@@ -93,10 +100,32 @@ const initialState: PersonState = {
       description: 'Cơm gà',
       category: 'Đi chợ',
       amount: 10000,
-      spender: 'Trang',
+      spenderId: 5,
       status: 'Đã pay',
     },
   ],
+  spenderMap: {
+    1: {
+      id: 1,
+      name: 'Trang',
+    },
+    2: {
+      id: 2,
+      name: 'Hoàng',
+    },
+    3: {
+      id: 3,
+      name: 'Tiến',
+    },
+    4: {
+      id: 4,
+      name: 'Hiếu',
+    },
+    5: {
+      id: 5,
+      name: 'Thanh',
+    },
+  },
 };
 
 export interface UpdateCellDataPayload {
@@ -109,11 +138,11 @@ export const personSlice = createSlice({
   name: 'person',
   initialState,
   reducers: {
-    updatePerson: (state, action: PayloadAction<UpdateCellDataPayload>) => {
+    updateEntry: (state, action: PayloadAction<UpdateCellDataPayload>) => {
       const { index, column, value } = action.payload;
       state.data[index][column] = value;
     },
-    deletePerson: (state, action: PayloadAction<number[]>) => {
+    deleteEntry: (state, action: PayloadAction<number[]>) => {
       state.data = state.data.filter(
         (person, index) => action.payload.indexOf(index) === -1
       );
@@ -121,14 +150,18 @@ export const personSlice = createSlice({
   },
 });
 
-export const { updatePerson, deletePerson } = personSlice.actions;
+export const { updateEntry, deleteEntry } = personSlice.actions;
 
 export const selectAllPerson = (state: AppState) => {
-  return state.person.present.data;
+  return state.entry.present.data;
 };
 
 export const selectColumnMapping = (state: AppState) => {
-  return state.person.present.columnNameMapping;
+  return state.entry.present.columnNameMapping;
+};
+
+export const selectSpenderMap = (state: AppState) => {
+  return state.entry.present.spenderMap;
 };
 
 export default personSlice.reducer;
