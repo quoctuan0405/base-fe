@@ -24,12 +24,15 @@ import {
 } from '../../../redux/reducer/entry';
 import { table } from 'console';
 import { useAppSelector } from '../../../redux/hooks';
+import { Trans, useTranslation } from 'next-i18next';
 
 interface Props {
   table: Table<Entry>;
 }
 
 export const ColumnOrderMenu: React.FC<Props> = ({ table }) => {
+  const { t } = useTranslation('common');
+
   const columnMapping = useAppSelector(selectColumnMapping);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -66,7 +69,7 @@ export const ColumnOrderMenu: React.FC<Props> = ({ table }) => {
                       <Checkbox checked={column.getIsVisible()} />
                     </ListItemIcon>
                     <ListItemText>
-                      {columnMapping[column.id as EntryField]}
+                      {t(columnMapping[column.id as EntryField])}
                     </ListItemText>
                   </MenuItem>
                 );

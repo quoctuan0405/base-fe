@@ -1,5 +1,6 @@
 {
   "hi": "Xin chào",
+  "select": "Chọn",
   "id": "ID",
   "spendAt": "Ngày chi",
   "description": "Nội dung",
@@ -8,5 +9,6 @@
   "spender": "Người chi",
   "status": "Trạng thái",
   "pay": "Đã trả tiền",
-  "notPay": "Chưa trả tiền"
+  "notPay": "Chưa trả tiền",
+  "action": "Hành động"
 }

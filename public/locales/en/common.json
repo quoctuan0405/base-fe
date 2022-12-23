@@ -1,5 +1,6 @@
 {
   "hi": "hi there",
+  "select": "Select",
   "id": "ID",
   "spendAt": "Spend at",
   "description": "Description",
@@ -7,6 +8,7 @@
   "amount": "Amount",
   "spender": "Spender",
   "status": "Status",
+  "action": "Action",
   "pay": "Pay",
   "notPay": "Not pay"
 }
