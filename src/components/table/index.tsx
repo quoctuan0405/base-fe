@@ -60,6 +60,7 @@ import {
   DatePickerCell,
   CurrencyCell,
   SelectCell,
+  StatusCell,
 } from './cell';
 import React from 'react';
 import { EmptyHeader } from './header/EmptyHeader';
@@ -193,17 +194,17 @@ export const Table: React.FC = () => {
         size: 180,
       },
       {
-        id: EntryField.status,
-        accessorKey: EntryField.status,
+        id: EntryField.statusId,
+        accessorKey: EntryField.statusId,
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[EntryField.status]}
+            headerName={columnMapping[EntryField.statusId]}
           />
         ),
         cell: (cellContext) => (
-          <TextFieldCell
-            value={cellContext.cell.getValue()}
+          <StatusCell
+            value={cellContext.cell.getValue() as number}
             rowIndex={cellContext.row.index}
             columnId={cellContext.column.id}
           />

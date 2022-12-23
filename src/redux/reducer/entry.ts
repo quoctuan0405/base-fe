@@ -9,7 +9,7 @@ export enum EntryField {
   categoryId = 'categoryId',
   amount = 'amount',
   spenderId = 'spenderId',
-  status = 'status',
+  statusId = 'statusId',
   action = 'action',
 }
 
@@ -25,6 +25,17 @@ export interface Spender {
   name: string;
 }
 
+export enum StatusCode {
+  PAY = 'pay',
+  NOT_PAY = 'notPay',
+}
+
+export interface Status {
+  [key: string]: any;
+  id: number;
+  code: StatusCode;
+}
+
 export interface Entry {
   [key: string]: any;
   id: number;
@@ -33,13 +44,14 @@ export interface Entry {
   categoryId: number;
   amount: number;
   spenderId: number;
-  status: string;
+  statusId: number;
 }
 
 export interface EntryState {
   data: Entry[];
   spenders: Spender[];
   categories: Category[];
+  status: Status[];
   columnNameMapping: Record<EntryField, string>;
 }
 
@@ -52,7 +64,7 @@ const initialState: EntryState = {
     categoryId: 'Category',
     amount: 'Amount',
     spenderId: 'Spender',
-    status: 'Status',
+    statusId: 'Status',
     action: 'Action',
   },
   data: [
@@ -63,7 +75,7 @@ const initialState: EntryState = {
       categoryId: 1,
       amount: 10000,
       spenderId: 1,
-      status: 'Đã pay',
+      statusId: 1,
     },
     {
       id: 2,
@@ -72,7 +84,7 @@ const initialState: EntryState = {
       categoryId: 2,
       amount: 10000,
       spenderId: 1,
-      status: 'Đã pay',
+      statusId: 1,
     },
     {
       id: 3,
@@ -81,7 +93,7 @@ const initialState: EntryState = {
       categoryId: 3,
       amount: 10000,
       spenderId: 2,
-      status: 'Đã pay',
+      statusId: 2,
     },
     {
       id: 4,
@@ -90,7 +102,7 @@ const initialState: EntryState = {
       categoryId: 3,
       amount: 10000,
       spenderId: 3,
-      status: 'Đã pay',
+      statusId: 2,
     },
     {
       id: 5,
@@ -99,7 +111,7 @@ const initialState: EntryState = {
       categoryId: 1,
       amount: 10000,
       spenderId: 4,
-      status: 'Đã pay',
+      statusId: 1,
     },
     {
       id: 6,
@@ -108,7 +120,17 @@ const initialState: EntryState = {
       categoryId: 2,
       amount: 10000,
       spenderId: 5,
-      status: 'Đã pay',
+      statusId: 1,
+    },
+  ],
+  status: [
+    {
+      id: 1,
+      code: StatusCode.PAY,
+    },
+    {
+      id: 2,
+      code: StatusCode.NOT_PAY,
     },
   ],
   spenders: [
@@ -191,6 +213,10 @@ export const selectAllSpenders = (state: AppState) => {
 
 export const selectAllCategories = (state: AppState) => {
   return state.entry.present.categories;
+};
+
+export const selectAllStatus = (state: AppState) => {
+  return state.entry.present.status;
 };
 
 export default personSlice.reducer;
