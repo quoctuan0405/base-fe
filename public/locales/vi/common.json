@@ -1,3 +1,12 @@
 {
-    "hi": "Xin chào"
+  "hi": "Xin chào",
+  "id": "ID",
+  "spendAt": "Ngày chi",
+  "description": "Nội dung",
+  "category": "Hạng mục",
+  "amount": "Số tiền",
+  "spender": "Người chi",
+  "status": "Trạng thái",
+  "pay": "Đã trả tiền",
+  "notPay": "Chưa trả tiền"
 }

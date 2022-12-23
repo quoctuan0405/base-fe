@@ -67,8 +67,11 @@ import { EmptyHeader } from './header/EmptyHeader';
 import { AddRowHeader } from './header/AddRowHeader';
 import { ColumnOrderMenu } from './menu/ColumnOrderMenu';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import { Trans, useTranslation } from 'next-i18next';
 
 export const Table: React.FC = () => {
+  const { t } = useTranslation('common');
+
   const dispatch = useAppDispatch();
   const data = useAppSelector(selectAllEntries);
   const columnMapping = useAppSelector(selectColumnMapping);
@@ -90,12 +93,14 @@ export const Table: React.FC = () => {
       {
         id: EntryField.id,
         accessorKey: EntryField.id,
-        header: (headerContext) => (
-          <HeaderCell
-            headerContext={headerContext}
-            headerName={columnMapping[EntryField.id]}
-          />
-        ),
+        header: (headerContext) => {
+          return (
+            <HeaderCell
+              headerContext={headerContext}
+              headerName={t(columnMapping[EntryField.id])}
+            />
+          );
+        },
         cell: (cellContext) => (
           <ReadonlyCell value={cellContext.cell.getValue()} />
         ),
@@ -107,7 +112,7 @@ export const Table: React.FC = () => {
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[EntryField.spendAt]}
+            headerName={t(columnMapping[EntryField.spendAt])}
           />
         ),
         cell: (cellContext) => (
@@ -125,7 +130,7 @@ export const Table: React.FC = () => {
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[EntryField.description]}
+            headerName={t(columnMapping[EntryField.description])}
           />
         ),
         cell: (cellContext) => (
@@ -143,7 +148,7 @@ export const Table: React.FC = () => {
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[EntryField.categoryId]}
+            headerName={t(columnMapping[EntryField.categoryId])}
           />
         ),
         cell: (cellContext) => (
@@ -162,7 +167,7 @@ export const Table: React.FC = () => {
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[EntryField.amount]}
+            headerName={t(columnMapping[EntryField.amount])}
           />
         ),
         cell: (cellContext) => (
@@ -180,7 +185,7 @@ export const Table: React.FC = () => {
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[EntryField.spenderId]}
+            headerName={t(columnMapping[EntryField.spenderId])}
           />
         ),
         cell: (cellContext) => (
@@ -199,7 +204,7 @@ export const Table: React.FC = () => {
         header: (headerContext) => (
           <HeaderCell
             headerContext={headerContext}
-            headerName={columnMapping[EntryField.statusId]}
+            headerName={t(columnMapping[EntryField.statusId])}
           />
         ),
         cell: (cellContext) => (
@@ -227,7 +232,7 @@ export const Table: React.FC = () => {
     ];
 
     return columns;
-  }, []);
+  }, [t]);
 
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
     columns.map((column) => {

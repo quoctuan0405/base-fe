@@ -57,15 +57,15 @@ export interface EntryState {
 
 const initialState: EntryState = {
   columnNameMapping: {
-    select: 'Select',
-    id: 'ID',
-    spendAt: 'Spend at',
-    description: 'Description',
-    categoryId: 'Category',
-    amount: 'Amount',
-    spenderId: 'Spender',
-    statusId: 'Status',
-    action: 'Action',
+    select: 'select',
+    id: 'id',
+    spendAt: 'spendAt',
+    description: 'description',
+    categoryId: 'category',
+    amount: 'amount',
+    spenderId: 'spender',
+    statusId: 'status',
+    action: 'action',
   },
   data: [
     {

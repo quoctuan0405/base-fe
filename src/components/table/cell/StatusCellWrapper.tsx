@@ -15,6 +15,7 @@ import {
   updateEntry,
 } from '../../../redux/reducer/entry';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { Trans, useTranslation } from 'next-i18next';
 
 interface Props {
   value: number;
@@ -24,6 +25,8 @@ interface Props {
 
 export const StatusCellWrapper: React.FC<Props> = React.memo(
   ({ value: initialValue, rowIndex, columnId }) => {
+    const { t } = useTranslation('common');
+
     const dispatch = useAppDispatch();
     const listStatus = useAppSelector(selectAllStatus);
 
@@ -79,7 +82,7 @@ export const StatusCellWrapper: React.FC<Props> = React.memo(
         >
           {listStatus.map(({ id, code }) => (
             <MenuItem key={id} value={id}>
-              {code}
+              {t(code)}
             </MenuItem>
           ))}
         </Select>
