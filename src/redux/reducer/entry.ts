@@ -9,6 +9,7 @@ export enum EntryField {
   categoryId = 'categoryId',
   amount = 'amount',
   spenderId = 'spenderId',
+  recipientIds = 'recipientIds',
   statusId = 'statusId',
   action = 'action',
 }
@@ -19,7 +20,7 @@ export interface Category {
   name: string;
 }
 
-export interface Spender {
+export interface Member {
   [key: string]: any;
   id: number;
   name: string;
@@ -44,12 +45,13 @@ export interface Entry {
   categoryId: number;
   amount: number;
   spenderId: number;
+  recipientIds: number[];
   statusId: number;
 }
 
 export interface EntryState {
   data: Entry[];
-  spenders: Spender[];
+  members: Member[];
   categories: Category[];
   status: Status[];
   columnNameMapping: Record<EntryField, string>;
@@ -64,6 +66,7 @@ const initialState: EntryState = {
     categoryId: 'category',
     amount: 'amount',
     spenderId: 'spender',
+    recipientIds: 'recipient',
     statusId: 'status',
     action: 'action',
   },
@@ -75,6 +78,7 @@ const initialState: EntryState = {
       categoryId: 1,
       amount: 10000,
       spenderId: 1,
+      recipientIds: [1, 2, 3],
       statusId: 1,
     },
     {
@@ -84,6 +88,7 @@ const initialState: EntryState = {
       categoryId: 2,
       amount: 10000,
       spenderId: 1,
+      recipientIds: [2, 3, 4],
       statusId: 1,
     },
     {
@@ -93,6 +98,7 @@ const initialState: EntryState = {
       categoryId: 3,
       amount: 10000,
       spenderId: 2,
+      recipientIds: [2, 3, 4],
       statusId: 2,
     },
     {
@@ -102,6 +108,7 @@ const initialState: EntryState = {
       categoryId: 3,
       amount: 10000,
       spenderId: 3,
+      recipientIds: [1, 3, 4],
       statusId: 2,
     },
     {
@@ -111,6 +118,7 @@ const initialState: EntryState = {
       categoryId: 1,
       amount: 10000,
       spenderId: 4,
+      recipientIds: [1, 3, 5],
       statusId: 1,
     },
     {
@@ -120,6 +128,7 @@ const initialState: EntryState = {
       categoryId: 2,
       amount: 10000,
       spenderId: 5,
+      recipientIds: [1, 2, 3, 5],
       statusId: 1,
     },
   ],
@@ -133,7 +142,7 @@ const initialState: EntryState = {
       code: StatusCode.NOT_PAY,
     },
   ],
-  spenders: [
+  members: [
     {
       id: 1,
       name: 'Trang',
@@ -207,8 +216,8 @@ export const selectColumnMapping = (state: AppState) => {
   return state.entry.present.columnNameMapping;
 };
 
-export const selectAllSpenders = (state: AppState) => {
-  return state.entry.present.spenders;
+export const selectAllMembers = (state: AppState) => {
+  return state.entry.present.members;
 };
 
 export const selectAllCategories = (state: AppState) => {

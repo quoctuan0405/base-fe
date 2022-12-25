@@ -8,6 +8,7 @@
   "amount": "Số tiền",
   "spender": "Người chi",
   "status": "Trạng thái",
+  "recipient": "Recipient",
   "pay": "Đã trả tiền",
   "notPay": "Chưa trả tiền",
   "action": "Hành động"

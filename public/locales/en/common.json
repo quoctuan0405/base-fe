@@ -9,6 +9,7 @@
   "spender": "Spender",
   "status": "Status",
   "action": "Action",
+  "recipient": "Recipient",
   "pay": "Pay",
   "notPay": "Not pay"
 }
