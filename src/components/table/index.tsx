@@ -43,8 +43,8 @@ import {
   updateEntry,
   selectColumnMapping,
   EntryField,
-  selectAllSpenders,
-  Spender,
+  selectAllMembers,
+  Member,
   Category,
   selectAllCategories,
 } from '../../redux/reducer/entry';
@@ -75,7 +75,7 @@ export const Table: React.FC = () => {
   const dispatch = useAppDispatch();
   const data = useAppSelector(selectAllEntries);
   const columnMapping = useAppSelector(selectColumnMapping);
-  const spenders = useAppSelector(selectAllSpenders);
+  const members = useAppSelector(selectAllMembers);
   const categories = useAppSelector(selectAllCategories);
 
   const columns = useMemo(() => {
@@ -190,8 +190,8 @@ export const Table: React.FC = () => {
         ),
         cell: (cellContext) => (
           <SelectCell
-            options={spenders}
-            value={cellContext.cell.getValue() as Spender['id']}
+            options={members}
+            value={cellContext.cell.getValue() as Member['id']}
             rowIndex={cellContext.row.index}
             columnId={cellContext.column.id}
           />
