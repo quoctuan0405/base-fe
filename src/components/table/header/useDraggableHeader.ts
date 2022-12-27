@@ -1,32 +1,19 @@
-import { TableCell, Box, Typography, Divider } from '@mui/material';
-import {
-  Column,
-  flexRender,
-  Header,
-  ColumnOrderState,
-  Table,
-  HeaderContext,
-} from '@tanstack/react-table';
+import { MutableRefObject } from 'react';
+import { Column, Header, ColumnOrderState, Table } from '@tanstack/react-table';
 import _ from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrop, useDrag, XYCoord } from 'react-dnd';
-import { useMergeRef } from '../../../hooks/mergeRef';
 import { Entry } from '../../../redux/reducer/entry';
 
 interface Props {
-  headerContext: HeaderContext<Entry, unknown>;
-  headerName: string;
+  header: Header<Entry, unknown>;
+  table: Table<Entry>;
+  ref: MutableRefObject<HTMLElement | undefined>;
 }
 
-export const HeaderCell: React.FC<Props> = ({
-  headerContext: { header, table },
-  headerName,
-}) => {
+export const useDraggableHeader = ({ header, table, ref }: Props) => {
   const { getState, setColumnOrder } = table;
   const { columnOrder } = getState();
   const { column } = header;
-
-  const ref = useRef<HTMLElement>();
 
   const reorderColumn = (
     draggedColumnId: string,
@@ -109,47 +96,5 @@ export const HeaderCell: React.FC<Props> = ({
     }),
   });
 
-  const mergeRef = useMergeRef([ref, dropRef, previewRef]);
-
-  return (
-    <TableCell
-      key={header.id}
-      sx={{
-        minWidth: header.getSize(),
-        paddingRight: 0,
-      }}
-      ref={mergeRef}
-    >
-      <Box
-        sx={{
-          display: 'flex',
-          opacity: isOver || isDragging ? 0.3 : 1,
-          transition: 'opacity 0.1s',
-        }}
-      >
-        <Typography fontWeight="bold">{headerName}</Typography>
-        <Box
-          sx={{ flexGrow: 1, cursor: 'grab' }}
-          ref={(node: React.ReactElement) => dragRef(node)}
-        />
-        <Box
-          sx={{
-            cursor: 'col-resize',
-            marginLeft: 'auto',
-            paddingLeft: 0.5,
-            paddingRight: 0.5,
-            '&:hover': {
-              '& hr': {
-                border: 2,
-              },
-            },
-          }}
-          onMouseDown={header.getResizeHandler()}
-          onTouchStart={header.getResizeHandler()}
-        >
-          <Divider orientation="vertical" light={true} />
-        </Box>
-      </Box>
-    </TableCell>
-  );
+  return { isOver, isDragging, dropRef, dragRef, previewRef };
 };

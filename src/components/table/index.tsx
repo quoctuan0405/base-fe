@@ -20,19 +20,21 @@ import {
   TableContainer,
 } from '@mui/material';
 import {
+  CellContext,
   Column,
   ColumnDef,
   ColumnOrderState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  HeaderContext,
   RowData,
   RowSelection,
   RowSelectionState,
   useReactTable,
 } from '@tanstack/react-table';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { HeaderCell } from './header/HeaderCell';
+import { SortableHeaderCell } from './header/SortableHeaderCell';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -55,12 +57,13 @@ import _ from 'lodash';
 import {
   DeleteCell,
   TextFieldCell,
-  CheckboxCell,
+  SelectRowCell,
   ReadonlyCell,
   DatePickerCell,
   CurrencyCell,
   SelectCell,
   StatusCell,
+  RecipientCheckboxCell,
 } from './cell';
 import React from 'react';
 import { EmptyHeader } from './header/EmptyHeader';
@@ -68,6 +71,7 @@ import { AddRowHeader } from './header/AddRowHeader';
 import { ColumnOrderMenu } from './menu/ColumnOrderMenu';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import { Trans, useTranslation } from 'next-i18next';
+import { UnsortableHeaderCell } from './header/UnsortableHeaderCell';
 
 export const Table: React.FC = () => {
   const { t } = useTranslation('common');
@@ -87,7 +91,7 @@ export const Table: React.FC = () => {
         header: (headerContext) => (
           <EmptyHeader headerId={headerContext.header.id} />
         ),
-        cell: (cellContext) => <CheckboxCell cellContext={cellContext} />,
+        cell: (cellContext) => <SelectRowCell cellContext={cellContext} />,
         size: 10,
       },
       {
@@ -95,7 +99,7 @@ export const Table: React.FC = () => {
         accessorKey: EntryField.id,
         header: (headerContext) => {
           return (
-            <HeaderCell
+            <SortableHeaderCell
               headerContext={headerContext}
               headerName={t(columnMapping[EntryField.id])}
             />
@@ -110,7 +114,7 @@ export const Table: React.FC = () => {
         id: EntryField.spendAt,
         accessorKey: EntryField.spendAt,
         header: (headerContext) => (
-          <HeaderCell
+          <SortableHeaderCell
             headerContext={headerContext}
             headerName={t(columnMapping[EntryField.spendAt])}
           />
@@ -128,7 +132,7 @@ export const Table: React.FC = () => {
         id: EntryField.description,
         accessorKey: EntryField.description,
         header: (headerContext) => (
-          <HeaderCell
+          <SortableHeaderCell
             headerContext={headerContext}
             headerName={t(columnMapping[EntryField.description])}
           />
@@ -142,11 +146,36 @@ export const Table: React.FC = () => {
         ),
         size: 180,
       },
+      ...members.map((member) => {
+        return {
+          id: `recipient_${member.id}`,
+          accessorFn: (entry: Entry) =>
+            entry.recipientIds.indexOf(member.id) !== -1,
+          header: (
+            headerContext: HeaderContext<Entry, string | number | boolean>
+          ) => (
+            <UnsortableHeaderCell
+              headerContext={headerContext}
+              headerName={member.name}
+            />
+          ),
+          cell: (
+            cellContext: CellContext<Entry, string | number | boolean>
+          ) => (
+            <RecipientCheckboxCell
+              memberId={member.id}
+              rowIndex={cellContext.row.index}
+              value={cellContext.getValue() as boolean}
+            />
+          ),
+          size: 90,
+        };
+      }),
       {
         id: EntryField.categoryId,
         accessorKey: EntryField.categoryId,
         header: (headerContext) => (
-          <HeaderCell
+          <SortableHeaderCell
             headerContext={headerContext}
             headerName={t(columnMapping[EntryField.categoryId])}
           />
@@ -165,7 +194,7 @@ export const Table: React.FC = () => {
         id: EntryField.amount,
         accessorKey: EntryField.amount,
         header: (headerContext) => (
-          <HeaderCell
+          <SortableHeaderCell
             headerContext={headerContext}
             headerName={t(columnMapping[EntryField.amount])}
           />
@@ -183,7 +212,7 @@ export const Table: React.FC = () => {
         id: EntryField.spenderId,
         accessorKey: EntryField.spenderId,
         header: (headerContext) => (
-          <HeaderCell
+          <SortableHeaderCell
             headerContext={headerContext}
             headerName={t(columnMapping[EntryField.spenderId])}
           />
@@ -202,7 +231,7 @@ export const Table: React.FC = () => {
         id: EntryField.statusId,
         accessorKey: EntryField.statusId,
         header: (headerContext) => (
-          <HeaderCell
+          <SortableHeaderCell
             headerContext={headerContext}
             headerName={t(columnMapping[EntryField.statusId])}
           />
@@ -232,7 +261,7 @@ export const Table: React.FC = () => {
     ];
 
     return columns;
-  }, [t]);
+  }, [t, members]);
 
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
     columns.map((column) => {

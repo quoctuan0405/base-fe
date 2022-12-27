@@ -190,6 +190,11 @@ export interface UpdateCellDataPayload {
   value: any;
 }
 
+export interface ToggleMemberPayload {
+  index: number;
+  value: number;
+}
+
 export const personSlice = createSlice({
   name: 'entry',
   initialState,
@@ -203,10 +208,23 @@ export const personSlice = createSlice({
         (entry, index) => action.payload.indexOf(index) === -1
       );
     },
+    toggleRecipient: (state, action: PayloadAction<ToggleMemberPayload>) => {
+      const { index: rowIndex, value } = action.payload;
+
+      const index =
+        state.data[rowIndex][EntryField.recipientIds].indexOf(value);
+
+      if (index === -1) {
+        state.data[rowIndex][EntryField.recipientIds].push(value);
+      } else {
+        state.data[rowIndex][EntryField.recipientIds].splice(index, 1);
+      }
+    },
   },
 });
 
-export const { updateEntry, deleteEntry } = personSlice.actions;
+export const { updateEntry, deleteEntry, toggleRecipient } =
+  personSlice.actions;
 
 export const selectAllEntries = (state: AppState) => {
   return state.entry.present.data;

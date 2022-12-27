@@ -31,7 +31,9 @@ export const DatePickerCellWrapper: React.FC<Props> = React.memo(
     return (
       <TableCell
         onClick={(event) => {
-          event.stopPropagation();
+          if (event.target !== event.currentTarget) {
+            event.stopPropagation();
+          }
         }}
       >
         <LocalizationProvider dateAdapter={AdapterMoment}>

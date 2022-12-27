@@ -8,7 +8,7 @@ interface Props {
   cellContext: CellContext<Entry, unknown>;
 }
 
-export const CheckboxCellWrapper: React.FC<Props> = ({
+export const SelectRowCellWrapper: React.FC<Props> = ({
   cellContext: { row, cell },
 }) => {
   const toggleSelectHandler = useCallback(() => {
@@ -17,7 +17,6 @@ export const CheckboxCellWrapper: React.FC<Props> = ({
 
   return (
     <MemoizedCheckboxCell
-      cellId={cell.id}
       selected={row.getIsSelected()}
       onChange={toggleSelectHandler}
     />

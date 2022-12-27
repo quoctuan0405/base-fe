@@ -58,21 +58,23 @@ export const ColumnOrderMenu: React.FC<Props> = ({ table }) => {
           <FormGroup>
             <MenuList>
               {table.getAllLeafColumns().map((column) => {
-                return (
-                  <MenuItem
-                    onClick={() => {
-                      column.toggleVisibility();
-                    }}
-                    key={column.id}
-                  >
-                    <ListItemIcon>
-                      <Checkbox checked={column.getIsVisible()} />
-                    </ListItemIcon>
-                    <ListItemText>
-                      {t(columnMapping[column.id as EntryField])}
-                    </ListItemText>
-                  </MenuItem>
-                );
+                if (columnMapping[column.id as EntryField]) {
+                  return (
+                    <MenuItem
+                      onClick={() => {
+                        column.toggleVisibility();
+                      }}
+                      key={column.id}
+                    >
+                      <ListItemIcon>
+                        <Checkbox checked={column.getIsVisible()} />
+                      </ListItemIcon>
+                      <ListItemText>
+                        {t(columnMapping[column.id as EntryField])}
+                      </ListItemText>
+                    </MenuItem>
+                  );
+                }
               })}
             </MenuList>
           </FormGroup>
