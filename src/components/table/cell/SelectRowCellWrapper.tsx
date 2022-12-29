@@ -11,8 +11,8 @@ interface Props {
 export const SelectRowCellWrapper: React.FC<Props> = ({
   cellContext: { row, cell },
 }) => {
-  const toggleSelectHandler = useCallback(() => {
-    return row.getToggleExpandedHandler();
+  const toggleSelectHandler = useCallback((event: unknown) => {
+    return row.getToggleSelectedHandler()(event);
   }, []);
 
   return (
