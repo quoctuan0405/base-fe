@@ -363,14 +363,19 @@ export const Table: React.FC = () => {
                 key={row.id}
                 sx={(theme) => ({
                   '&:hover': {
-                    backgroundColor: theme.palette.action.hover,
+                    backgroundColor: row.getIsSelected()
+                      ? alpha(
+                          theme.palette.primary.main,
+                          theme.palette.action.activatedOpacity
+                        )
+                      : theme.palette.action.hover,
                   },
                   userSelect: 'none',
                   cursor: 'pointer',
                   backgroundColor: row.getIsSelected()
                     ? alpha(
                         theme.palette.primary.main,
-                        theme.palette.action.activatedOpacity
+                        theme.palette.action.selectedOpacity
                       )
                     : null,
                   transition: 'background-color 0.1s',
