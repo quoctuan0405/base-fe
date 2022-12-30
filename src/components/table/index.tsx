@@ -1,3 +1,10 @@
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Table as MUITable,
   FormGroup,
@@ -18,6 +25,7 @@ import {
   Toolbar,
   Tooltip,
   TableContainer,
+  InputAdornment,
 } from '@mui/material';
 import {
   CellContext,
@@ -33,7 +41,6 @@ import {
   RowSelectionState,
   useReactTable,
 } from '@tanstack/react-table';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SortableHeaderCell } from './header/SortableHeaderCell';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -65,13 +72,13 @@ import {
   StatusCell,
   RecipientCheckboxCell,
 } from './cell';
-import React from 'react';
 import { EmptyHeader } from './header/EmptyHeader';
 import { AddRowHeader } from './header/AddRowHeader';
 import { ColumnOrderMenu } from './menu/ColumnOrderMenu';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import { Trans, useTranslation } from 'next-i18next';
 import { UnsortableHeaderCell } from './header/UnsortableHeaderCell';
+import SearchIcon from '@mui/icons-material/Search';
 
 export const Table: React.FC = () => {
   const { t } = useTranslation('common');
@@ -325,9 +332,49 @@ export const Table: React.FC = () => {
 
   return (
     <div ref={ref} tabIndex={-1}>
-      <Box sx={{ display: 'flex', flexFlow: 'row wrap' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexFlow: 'row wrap',
+          marginTop: 2,
+          marginBottom: 1.5,
+        }}
+      >
         <Box sx={{ flexGrow: 1 }} />
         <Box>
+          <FormControl>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography fontWeight="bold" color="GrayText">
+                  Money Distribution
+                </Typography>
+              }
+            />
+          </FormControl>
+          <FormControl>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography fontWeight="bold" color="GrayText">
+                  Recipients
+                </Typography>
+              }
+            />
+          </FormControl>
+          <TextField
+            sx={{ marginLeft: 1, marginRight: 1, marginTop: 0.5 }}
+            placeholder="Search"
+            size="small"
+            variant="standard"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
           <ColumnOrderMenu table={table} />
           <Tooltip title="Filters">
             <IconButton>
