@@ -11,5 +11,7 @@
   "action": "Action",
   "recipient": "Recipient",
   "pay": "Pay",
-  "notPay": "Not pay"
+  "notPay": "Not pay",
+  "recipients": "Recipients",
+  "moneyDistribution": "Money distribution"
 }

@@ -11,5 +11,7 @@
   "recipient": "Recipient",
   "pay": "Đã trả tiền",
   "notPay": "Chưa trả tiền",
-  "action": "Hành động"
+  "action": "Hành động",
+  "recipients": "Người dùng",
+  "moneyDistribution": "Tiền chia"
 }

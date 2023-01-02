@@ -347,7 +347,7 @@ export const Table: React.FC = () => {
               control={<Checkbox />}
               label={
                 <Typography fontWeight="bold" color="GrayText">
-                  Money Distribution
+                  {t('moneyDistribution')}
                 </Typography>
               }
             />
@@ -357,7 +357,7 @@ export const Table: React.FC = () => {
               control={<Checkbox />}
               label={
                 <Typography fontWeight="bold" color="GrayText">
-                  Recipients
+                  {t('recipients')}
                 </Typography>
               }
             />
