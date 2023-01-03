@@ -323,7 +323,6 @@ export const Table: React.FC = () => {
     useState<boolean>(false);
 
   useEffect(() => {
-    console.log(recipientColumnsVisibility);
     setColumnVisibility({
       ...columnVisibility,
       ...generateRecipientVisibilityState(recipientColumnsVisibility),
