@@ -68,10 +68,11 @@ import {
   SelectRowCell,
   ReadonlyCell,
   DatePickerCell,
-  CurrencyCell,
+  EditableCurrencyCell,
   SelectCell,
   StatusCell,
   RecipientCheckboxCell,
+  CurrencyCell,
 } from './cell';
 import { EmptyHeader } from './header/EmptyHeader';
 import { AddRowHeader } from './header/AddRowHeader';
@@ -82,6 +83,8 @@ import { UnsortableHeaderCell } from './header/UnsortableHeaderCell';
 import SearchIcon from '@mui/icons-material/Search';
 import { RecipientsVisibility } from './menu/RecipientsVisibility';
 import { useGenerateRecipientVisibilityState } from '../../hooks/useGenerateRecipientVisibilityState';
+import { useGenerateMoneyDistributionVisibilityState } from '../../hooks/useGenerateMoneyDistributionVisibilityState';
+import { MoneyDistributionVisibility } from './menu/MoneyDistributionVisibility';
 
 export const Table: React.FC = () => {
   const { t } = useTranslation('common');
@@ -210,7 +213,7 @@ export const Table: React.FC = () => {
           />
         ),
         cell: (cellContext) => (
-          <CurrencyCell
+          <EditableCurrencyCell
             value={cellContext.cell.getValue()}
             rowIndex={cellContext.row.index}
             columnId={cellContext.column.id}
@@ -237,6 +240,30 @@ export const Table: React.FC = () => {
         ),
         size: 180,
       },
+      ...members.map((member) => ({
+        id: `money_distribution_${member.id}`,
+        accessorFn: (entry: Entry) => {
+          if (entry.recipientIds.indexOf(member.id) === -1) {
+            return 0;
+          } else if (entry.recipientIds.length === 0) {
+            return 0;
+          } else {
+            return entry.amount / entry.recipientIds.length;
+          }
+        },
+        header: (
+          headerContext: HeaderContext<Entry, string | number | boolean>
+        ) => (
+          <UnsortableHeaderCell
+            headerContext={headerContext}
+            headerName={member.name}
+          />
+        ),
+        cell: (cellContext: CellContext<Entry, string | number | boolean>) => (
+          <CurrencyCell value={cellContext.getValue() as number} />
+        ),
+        size: 150,
+      })),
       {
         id: EntryField.statusId,
         accessorKey: EntryField.statusId,
@@ -282,9 +309,13 @@ export const Table: React.FC = () => {
   const generateRecipientVisibilityState =
     useGenerateRecipientVisibilityState();
 
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-    generateRecipientVisibilityState(false)
-  );
+  const generateMoneyDistributionVisibility =
+    useGenerateMoneyDistributionVisibilityState();
+
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    ...generateRecipientVisibilityState(false),
+    ...generateMoneyDistributionVisibility(false),
+  });
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [recipientColumnsVisibility, setRecipientColumnsVisibility] =
     useState<boolean>(false);
@@ -292,10 +323,19 @@ export const Table: React.FC = () => {
     useState<boolean>(false);
 
   useEffect(() => {
-    setColumnVisibility(
-      generateRecipientVisibilityState(recipientColumnsVisibility)
-    );
+    console.log(recipientColumnsVisibility);
+    setColumnVisibility({
+      ...columnVisibility,
+      ...generateRecipientVisibilityState(recipientColumnsVisibility),
+    });
   }, [recipientColumnsVisibility]);
+
+  useEffect(() => {
+    setColumnVisibility({
+      ...columnVisibility,
+      ...generateMoneyDistributionVisibility(moneyDistributionVisibility),
+    });
+  }, [moneyDistributionVisibility]);
 
   const table = useReactTable({
     data,
@@ -368,16 +408,11 @@ export const Table: React.FC = () => {
             recipientColumnsVisibility={recipientColumnsVisibility}
             setRecipientColumnsVisibility={setRecipientColumnsVisibility}
           />
-          <FormControl>
-            <FormControlLabel
-              control={<Checkbox />}
-              label={
-                <Typography fontWeight="bold">
-                  {t('moneyDistribution')}
-                </Typography>
-              }
-            />
-          </FormControl>
+          <MoneyDistributionVisibility
+            table={table}
+            moneyDistributionVisibility={moneyDistributionVisibility}
+            setMoneyDistributionVisibility={setMoneyDistributionVisibility}
+          />
           <TextField
             sx={{ marginLeft: 1, marginRight: 1, marginTop: 0.5 }}
             placeholder="Search"
