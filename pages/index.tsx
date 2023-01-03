@@ -8,13 +8,6 @@ import { AppBar } from '../src/components/appbar';
 import { Box, Paper } from '@mui/material';
 import { TodoList } from '../src/components/todo';
 import { Table } from '../src/components/table';
-import { updateEntry } from '../src/redux/reducer/entry';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
 
 export default function IndexPage() {
   const dispatch = useAppDispatch();
