@@ -40,6 +40,7 @@ import {
   RowSelection,
   RowSelectionState,
   useReactTable,
+  VisibilityState,
 } from '@tanstack/react-table';
 import { SortableHeaderCell } from './header/SortableHeaderCell';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -79,6 +80,7 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import { Trans, useTranslation } from 'next-i18next';
 import { UnsortableHeaderCell } from './header/UnsortableHeaderCell';
 import SearchIcon from '@mui/icons-material/Search';
+import { RecipientsVisibility } from './menu/RecipientsVisibility';
 
 export const Table: React.FC = () => {
   const { t } = useTranslation('common');
@@ -277,6 +279,10 @@ export const Table: React.FC = () => {
   );
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [recipientColumnsVisibility, setRecipientColumnsVisibility] =
+    useState<boolean>(false);
+  const [moneyDistributionVisibility, setMoneyDistributionVisibility] =
+    useState<boolean>(false);
 
   const table = useReactTable({
     data,
@@ -293,6 +299,16 @@ export const Table: React.FC = () => {
 
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number>(0);
   const selectedRowModel = table.getSelectedRowModel();
+
+  useEffect(() => {
+    const columnVisiblity: Record<string, boolean> = {};
+
+    for (let member of members) {
+      columnVisiblity[`recipient_${member.id}`] = recipientColumnsVisibility;
+    }
+
+    table.setColumnVisibility(columnVisiblity);
+  }, [recipientColumnsVisibility]);
 
   const deleteRef = useHotkeys(
     'delete',
@@ -342,22 +358,17 @@ export const Table: React.FC = () => {
       >
         <Box sx={{ flexGrow: 1 }} />
         <Box>
+          <RecipientsVisibility
+            table={table}
+            recipientColumnsVisibility={recipientColumnsVisibility}
+            setRecipientColumnsVisibility={setRecipientColumnsVisibility}
+          />
           <FormControl>
             <FormControlLabel
               control={<Checkbox />}
               label={
                 <Typography fontWeight="bold" color="GrayText">
                   {t('moneyDistribution')}
-                </Typography>
-              }
-            />
-          </FormControl>
-          <FormControl>
-            <FormControlLabel
-              control={<Checkbox />}
-              label={
-                <Typography fontWeight="bold" color="GrayText">
-                  {t('recipients')}
                 </Typography>
               }
             />
