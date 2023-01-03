@@ -32,11 +32,7 @@ export const RecipientsVisibility: React.FC<Props> = ({
             }}
           />
         }
-        label={
-          <Typography fontWeight="bold" color="GrayText">
-            {t('recipients')}
-          </Typography>
-        }
+        label={<Typography fontWeight="bold">{t('recipients')}</Typography>}
       />
     </FormControl>
   );

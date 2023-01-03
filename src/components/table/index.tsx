@@ -81,6 +81,7 @@ import { Trans, useTranslation } from 'next-i18next';
 import { UnsortableHeaderCell } from './header/UnsortableHeaderCell';
 import SearchIcon from '@mui/icons-material/Search';
 import { RecipientsVisibility } from './menu/RecipientsVisibility';
+import { useGenerateRecipientVisibilityState } from '../../hooks/useGenerateRecipientVisibilityState';
 
 export const Table: React.FC = () => {
   const { t } = useTranslation('common');
@@ -278,11 +279,23 @@ export const Table: React.FC = () => {
     })
   );
 
+  const generateRecipientVisibilityState =
+    useGenerateRecipientVisibilityState();
+
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    generateRecipientVisibilityState(false)
+  );
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [recipientColumnsVisibility, setRecipientColumnsVisibility] =
     useState<boolean>(false);
   const [moneyDistributionVisibility, setMoneyDistributionVisibility] =
     useState<boolean>(false);
+
+  useEffect(() => {
+    setColumnVisibility(
+      generateRecipientVisibilityState(recipientColumnsVisibility)
+    );
+  }, [recipientColumnsVisibility]);
 
   const table = useReactTable({
     data,
@@ -290,25 +303,17 @@ export const Table: React.FC = () => {
     state: {
       columnOrder: columnOrder,
       rowSelection,
+      columnVisibility,
     },
     onColumnOrderChange: setColumnOrder,
     onRowSelectionChange: setRowSelection,
+    onColumnVisibilityChange: setColumnVisibility,
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
   });
 
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number>(0);
   const selectedRowModel = table.getSelectedRowModel();
-
-  useEffect(() => {
-    const columnVisiblity: Record<string, boolean> = {};
-
-    for (let member of members) {
-      columnVisiblity[`recipient_${member.id}`] = recipientColumnsVisibility;
-    }
-
-    table.setColumnVisibility(columnVisiblity);
-  }, [recipientColumnsVisibility]);
 
   const deleteRef = useHotkeys(
     'delete',
@@ -367,7 +372,7 @@ export const Table: React.FC = () => {
             <FormControlLabel
               control={<Checkbox />}
               label={
-                <Typography fontWeight="bold" color="GrayText">
+                <Typography fontWeight="bold">
                   {t('moneyDistribution')}
                 </Typography>
               }
