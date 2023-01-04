@@ -17,8 +17,8 @@ export const store = configureStore({
       limit: 10,
     }),
     entry: undoable(entryReducer, {
-      undoType: ActionTypes.PERSON_UNDO,
-      redoType: ActionTypes.PERSON_REDO,
+      undoType: ActionTypes.ENTRY_UNDO,
+      redoType: ActionTypes.ENTRY_REDO,
       limit: 10,
     }),
   },

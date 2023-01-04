@@ -9,7 +9,6 @@ import { useTranslation } from 'next-i18next';
 import { Entry } from '../../../redux/reducer/entry';
 
 interface Props {
-  table: Table<Entry>;
   moneyDistributionVisibility: boolean;
   setMoneyDistributionVisibility: (
     moneyDistributionVisibility: boolean
@@ -17,7 +16,6 @@ interface Props {
 }
 
 export const MoneyDistributionVisibility: React.FC<Props> = ({
-  table,
   moneyDistributionVisibility,
   setMoneyDistributionVisibility,
 }) => {

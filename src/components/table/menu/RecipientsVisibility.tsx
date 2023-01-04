@@ -9,13 +9,11 @@ import { useTranslation } from 'next-i18next';
 import { Entry } from '../../../redux/reducer/entry';
 
 interface Props {
-  table: Table<Entry>;
   recipientColumnsVisibility: boolean;
   setRecipientColumnsVisibility: (recipientColumnsVisibility: boolean) => void;
 }
 
 export const RecipientsVisibility: React.FC<Props> = ({
-  table,
   recipientColumnsVisibility,
   setRecipientColumnsVisibility,
 }) => {

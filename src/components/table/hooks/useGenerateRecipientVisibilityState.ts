@@ -1,5 +1,5 @@
-import { useAppSelector } from '../redux/hooks';
-import { selectAllMembers } from '../redux/reducer/entry';
+import { useAppSelector } from '../../../redux/hooks';
+import { selectAllMembers } from '../../../redux/reducer/entry';
 
 export const useGenerateRecipientVisibilityState = () => {
   const members = useAppSelector(selectAllMembers);

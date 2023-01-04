@@ -77,14 +77,16 @@ import {
 import { EmptyHeader } from './header/EmptyHeader';
 import { AddRowHeader } from './header/AddRowHeader';
 import { ColumnOrderMenu } from './menu/ColumnOrderMenu';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import { Trans, useTranslation } from 'next-i18next';
 import { UnsortableHeaderCell } from './header/UnsortableHeaderCell';
 import SearchIcon from '@mui/icons-material/Search';
 import { RecipientsVisibility } from './menu/RecipientsVisibility';
-import { useGenerateRecipientVisibilityState } from '../../hooks/useGenerateRecipientVisibilityState';
-import { useGenerateMoneyDistributionVisibilityState } from '../../hooks/useGenerateMoneyDistributionVisibilityState';
+import { useGenerateRecipientVisibilityState } from './hooks/useGenerateRecipientVisibilityState';
+import { useGenerateMoneyDistributionVisibilityState } from './hooks/useGenerateMoneyDistributionVisibilityState';
 import { MoneyDistributionVisibility } from './menu/MoneyDistributionVisibility';
+import { EntryTable } from './table';
+import { ToggleFullscreen } from './menu/ToggleFullscreen';
+import { useEntryTableShortcut } from './hooks/useShortcut';
 
 export const Table: React.FC = () => {
   const { t } = useTranslation('common');
@@ -351,44 +353,9 @@ export const Table: React.FC = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const [lastSelectedIndex, setLastSelectedIndex] = useState<number>(0);
-  const selectedRowModel = table.getSelectedRowModel();
-
-  const deleteRef = useHotkeys(
-    'delete',
-    () => {
-      const selectedIndex: number[] = [];
-
-      for (let row of selectedRowModel.flatRows) {
-        selectedIndex.push(row.index);
-      }
-
-      dispatch(deleteEntry(selectedIndex));
-      table.resetRowSelection();
-    },
-    [selectedRowModel.flatRows]
-  );
-
-  const escapeRef = useHotkeys('esc', () => {
-    table.resetRowSelection();
-  });
-
-  const undoRef = useHotkeys('ctrl+z', () => {
-    dispatch({ type: ActionTypes.PERSON_UNDO });
-  });
-
-  const redoRef = useHotkeys('ctrl+shift+z', () => {
-    dispatch({ type: ActionTypes.PERSON_REDO });
-  });
-
   const ref = useRef(null);
 
-  useEffect(() => {
-    escapeRef.current = ref.current;
-    deleteRef.current = ref.current;
-    undoRef.current = ref.current;
-    redoRef.current = ref.current;
-  }, [ref.current]);
+  useEntryTableShortcut({ table, ref });
 
   return (
     <div ref={ref} tabIndex={-1}>
@@ -403,12 +370,10 @@ export const Table: React.FC = () => {
         <Box sx={{ flexGrow: 1 }} />
         <Box>
           <RecipientsVisibility
-            table={table}
             recipientColumnsVisibility={recipientColumnsVisibility}
             setRecipientColumnsVisibility={setRecipientColumnsVisibility}
           />
           <MoneyDistributionVisibility
-            table={table}
             moneyDistributionVisibility={moneyDistributionVisibility}
             setMoneyDistributionVisibility={setMoneyDistributionVisibility}
           />
@@ -431,92 +396,17 @@ export const Table: React.FC = () => {
               <FilterAltIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Toggle full screen">
-            <IconButton>
-              <FullscreenIcon />
-            </IconButton>
-          </Tooltip>
+          <ToggleFullscreen
+            table={table}
+            rowSelection={rowSelection}
+            recipientColumnsVisibility={recipientColumnsVisibility}
+            setRecipientColumnsVisibility={setRecipientColumnsVisibility}
+            moneyDistributionVisibility={moneyDistributionVisibility}
+            setMoneyDistributionVisibility={setMoneyDistributionVisibility}
+          />
         </Box>
       </Box>
-      <TableContainer sx={{ overflow: 'scroll' }}>
-        <MUITable>
-          <TableHead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <React.Fragment key={header.id}>
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </React.Fragment>
-                ))}
-              </TableRow>
-            ))}
-          </TableHead>
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={(theme) => ({
-                  '&:hover': {
-                    backgroundColor: row.getIsSelected()
-                      ? alpha(
-                          theme.palette.primary.main,
-                          theme.palette.action.activatedOpacity
-                        )
-                      : theme.palette.action.hover,
-                  },
-                  userSelect: 'none',
-                  cursor: 'pointer',
-                  backgroundColor: row.getIsSelected()
-                    ? alpha(
-                        theme.palette.primary.main,
-                        theme.palette.action.selectedOpacity
-                      )
-                    : null,
-                  transition: 'background-color 0.1s',
-                })}
-                onClick={(e) => {
-                  if (e.ctrlKey || e.shiftKey) {
-                    if (e.ctrlKey) {
-                      row.toggleSelected();
-                      setLastSelectedIndex(row.index);
-                    }
-
-                    if (e.shiftKey) {
-                      const newRowSelection: RowSelectionState =
-                        _.clone(rowSelection);
-
-                      if (lastSelectedIndex >= row.index) {
-                        for (let i = row.index; i <= lastSelectedIndex; i++) {
-                          newRowSelection[i] = true;
-                        }
-                      } else {
-                        for (let i = lastSelectedIndex; i <= row.index; i++) {
-                          newRowSelection[i] = true;
-                        }
-                      }
-
-                      table.setRowSelection(newRowSelection);
-                    }
-                  } else {
-                    table.resetRowSelection();
-                    row.toggleSelected();
-                    setLastSelectedIndex(row.index);
-                  }
-                }}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <React.Fragment key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </React.Fragment>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </MUITable>
-      </TableContainer>
+      <EntryTable table={table} rowSelection={rowSelection} />
     </div>
   );
 };

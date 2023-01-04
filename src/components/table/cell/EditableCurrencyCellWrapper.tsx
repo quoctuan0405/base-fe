@@ -18,7 +18,7 @@ export const EditableCurrencyCellWrapper: React.FC<Props> = React.memo(
     // We need to keep and update the state of the cell normally
     const [value, setValue] = useState(initialValue);
 
-    useEffect(() => {
+    const onBlur = () => {
       dispatch(
         updateEntry({
           column: columnId,
@@ -26,7 +26,7 @@ export const EditableCurrencyCellWrapper: React.FC<Props> = React.memo(
           value: value,
         })
       );
-    }, [value]);
+    };
 
     // If the initialValue is changed external, sync it up with our state
     useEffect(() => {
@@ -39,6 +39,7 @@ export const EditableCurrencyCellWrapper: React.FC<Props> = React.memo(
           fullWidth
           value={value}
           variant="outlined"
+          onBlur={onBlur}
           onChange={(event) => setValue(event.target.value)}
           onClick={(event) => event.stopPropagation()}
           size="small"
