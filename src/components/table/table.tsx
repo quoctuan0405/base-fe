@@ -13,14 +13,21 @@ import _ from 'lodash';
 interface Props {
   table: Table<any>;
   rowSelection: RowSelectionState;
+  maxHeight?: number | string;
 }
 
-export const EntryTable: React.FC<Props> = ({ table, rowSelection }) => {
+export const EntryTable: React.FC<Props> = ({
+  table,
+  rowSelection,
+  maxHeight,
+}) => {
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number>(0);
 
   return (
-    <TableContainer sx={{ overflow: 'scroll', maxHeight: '100vh' }}>
-      <MUITable>
+    <TableContainer
+      sx={{ overflow: 'scroll', maxHeight: maxHeight ? maxHeight : '100vh' }}
+    >
+      <MUITable stickyHeader>
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

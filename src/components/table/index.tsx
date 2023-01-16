@@ -97,6 +97,7 @@ export const Table: React.FC = () => {
   const members = useAppSelector(selectAllMembers);
   const categories = useAppSelector(selectAllCategories);
 
+  // Column definition
   const columns = useMemo(() => {
     const columnHelper = createColumnHelper<Entry>();
 
@@ -302,12 +303,14 @@ export const Table: React.FC = () => {
     return columns;
   }, [t, members]);
 
+  // Column order
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
     columns.map((column) => {
       return column.id as string;
     })
   );
 
+  // Column visibility
   const generateRecipientVisibilityState =
     useGenerateRecipientVisibilityState();
 
@@ -315,6 +318,7 @@ export const Table: React.FC = () => {
     useGenerateMoneyDistributionVisibilityState();
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    [EntryField.select]: false,
     ...generateRecipientVisibilityState(false),
     ...generateMoneyDistributionVisibility(false),
   });
@@ -338,6 +342,7 @@ export const Table: React.FC = () => {
     });
   }, [moneyDistributionVisibility]);
 
+  // Create new table
   const table = useReactTable({
     data,
     columns,
@@ -353,6 +358,7 @@ export const Table: React.FC = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  // Handling shortcut
   const ref = useRef(null);
 
   useEntryTableShortcut({ table, ref });
@@ -406,7 +412,7 @@ export const Table: React.FC = () => {
           />
         </Box>
       </Box>
-      <EntryTable table={table} rowSelection={rowSelection} />
+      <EntryTable table={table} rowSelection={rowSelection} maxHeight="90vh" />
     </div>
   );
 };
