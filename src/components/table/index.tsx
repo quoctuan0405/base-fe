@@ -26,6 +26,7 @@ import {
   Tooltip,
   TableContainer,
   InputAdornment,
+  Collapse,
 } from '@mui/material';
 import {
   CellContext,
@@ -85,8 +86,11 @@ import { useGenerateRecipientVisibilityState } from './hooks/useGenerateRecipien
 import { useGenerateMoneyDistributionVisibilityState } from './hooks/useGenerateMoneyDistributionVisibilityState';
 import { MoneyDistributionVisibility } from './menu/MoneyDistributionVisibility';
 import { EntryTable } from './table';
-import { ToggleFullscreen } from './menu/ToggleFullscreen';
+import { EnterFullscreen } from './menu/EnterFullscreen';
 import { useEntryTableShortcut } from './hooks/useShortcut';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { HeaderMenu } from './menu/HeaderMenu';
 
 export const Table: React.FC = () => {
   const { t } = useTranslation('common');
@@ -365,53 +369,14 @@ export const Table: React.FC = () => {
 
   return (
     <div ref={ref} tabIndex={-1}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexFlow: 'row wrap',
-          marginTop: 2,
-          marginBottom: 1.5,
-        }}
-      >
-        <Box sx={{ flexGrow: 1 }} />
-        <Box>
-          <RecipientsVisibility
-            recipientColumnsVisibility={recipientColumnsVisibility}
-            setRecipientColumnsVisibility={setRecipientColumnsVisibility}
-          />
-          <MoneyDistributionVisibility
-            moneyDistributionVisibility={moneyDistributionVisibility}
-            setMoneyDistributionVisibility={setMoneyDistributionVisibility}
-          />
-          <TextField
-            sx={{ marginLeft: 1, marginRight: 1, marginTop: 0.5 }}
-            placeholder="Search"
-            size="small"
-            variant="standard"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <ColumnOrderMenu table={table} />
-          <Tooltip title="Filters">
-            <IconButton>
-              <FilterAltIcon />
-            </IconButton>
-          </Tooltip>
-          <ToggleFullscreen
-            table={table}
-            rowSelection={rowSelection}
-            recipientColumnsVisibility={recipientColumnsVisibility}
-            setRecipientColumnsVisibility={setRecipientColumnsVisibility}
-            moneyDistributionVisibility={moneyDistributionVisibility}
-            setMoneyDistributionVisibility={setMoneyDistributionVisibility}
-          />
-        </Box>
-      </Box>
+      <HeaderMenu
+        table={table}
+        rowSelection={rowSelection}
+        recipientColumnsVisibility={recipientColumnsVisibility}
+        setRecipientColumnsVisibility={setRecipientColumnsVisibility}
+        moneyDistributionVisibility={moneyDistributionVisibility}
+        setMoneyDistributionVisibility={setMoneyDistributionVisibility}
+      />
       <EntryTable table={table} rowSelection={rowSelection} maxHeight="90vh" />
     </div>
   );

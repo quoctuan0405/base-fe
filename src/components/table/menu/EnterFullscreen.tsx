@@ -17,6 +17,7 @@ import { RecipientsVisibility } from './RecipientsVisibility';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useEntryTableShortcut } from '../hooks/useShortcut';
+import { HeaderMenu } from './HeaderMenu';
 
 interface Props {
   table: Table<any>;
@@ -29,7 +30,7 @@ interface Props {
   ) => void;
 }
 
-export const ToggleFullscreen: React.FC<Props> = ({
+export const EnterFullscreen: React.FC<Props> = ({
   table,
   rowSelection,
   recipientColumnsVisibility,
@@ -59,50 +60,16 @@ export const ToggleFullscreen: React.FC<Props> = ({
         </IconButton>
       </Tooltip>
       <Dialog fullScreen={true} open={open} onClose={handleClose} ref={ref}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexFlow: 'row wrap',
-            marginTop: 2,
-            marginBottom: 1.5,
-          }}
-        >
-          <Box sx={{ flexGrow: 1 }} />
-          <Box>
-            <RecipientsVisibility
-              recipientColumnsVisibility={recipientColumnsVisibility}
-              setRecipientColumnsVisibility={setRecipientColumnsVisibility}
-            />
-            <MoneyDistributionVisibility
-              moneyDistributionVisibility={moneyDistributionVisibility}
-              setMoneyDistributionVisibility={setMoneyDistributionVisibility}
-            />
-            <TextField
-              sx={{ marginLeft: 1, marginRight: 1, marginTop: 0.5 }}
-              placeholder="Search"
-              size="small"
-              variant="standard"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <ColumnOrderMenu table={table} />
-            <Tooltip title="Filters">
-              <IconButton>
-                <FilterAltIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Exit full screen">
-              <IconButton onClick={handleClose}>
-                <FullscreenExitIcon />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        </Box>
+        <HeaderMenu
+          table={table}
+          rowSelection={rowSelection}
+          moneyDistributionVisibility={moneyDistributionVisibility}
+          setMoneyDistributionVisibility={setMoneyDistributionVisibility}
+          recipientColumnsVisibility={recipientColumnsVisibility}
+          setRecipientColumnsVisibility={setRecipientColumnsVisibility}
+          fullScreenMode={true}
+          handleExitFullscreen={handleClose}
+        />
         <EntryTable table={table} rowSelection={rowSelection} />
       </Dialog>
     </>
