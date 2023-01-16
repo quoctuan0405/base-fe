@@ -26,7 +26,7 @@ export const SortableHeaderCell: React.FC<Props> = ({
     <TableCell
       key={header.id}
       sx={{
-        minWidth: header.getSize(),
+        width: header.getSize(),
         paddingRight: 0,
       }}
       ref={mergeRef}
